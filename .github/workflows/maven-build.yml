@@ -78,3 +78,16 @@ jobs:
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mvn deploy -DskipTests -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/LunarLaurus/LaurusCore
