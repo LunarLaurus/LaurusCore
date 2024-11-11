@@ -8,6 +8,7 @@ import net.laurus.data.dto.system.SystemInfo;
 import net.laurus.data.dto.system.SystemInfoDto;
 import net.laurus.data.dto.system.UpdateInformation;
 import net.laurus.data.enums.Vendor;
+import net.laurus.data.enums.system.SystemArchitecture;
 import net.laurus.data.impi.IpmiInfo;
 import net.laurus.data.impi.ilo.IntegratedLightsOutInfo;
 import net.laurus.network.IPv4Address;
@@ -16,20 +17,22 @@ import net.laurus.network.IPv4Address;
 @Log
 public class BaseClientDto implements UpdateInformation<SystemInfoDto> {
 
-    private String name;
+    private String clientHostName;
+    private SystemArchitecture arch;
     private Vendor vendor;
     private boolean hasIpmi;
     private SystemInfo system;
     private Optional<IpmiInfo> ipmiSystem;
 
     public BaseClientDto(SystemInfoDto systemInfoDTO) {
-        this.name = systemInfoDTO.getClientName();
-        Vendor vendor =  Vendor.lookup(systemInfoDTO.getModelName());
-        log.info("Client Vendor: "+systemInfoDTO.getModelName());
-        this.hasIpmi = !isZeroIPAddress(systemInfoDTO.getIloAddress());
+        this.clientHostName = systemInfoDTO.getSystemHostName();
+        Vendor vendor =  Vendor.lookup(systemInfoDTO.getSystemModelName());
+        this.arch = SystemArchitecture.fromValue(systemInfoDTO.getSystemArchitecture());
+        log.info("Client Vendor: "+systemInfoDTO.getSystemModelName());
+        this.hasIpmi = !isZeroIPAddress(systemInfoDTO.getIpmiAddress());
         this.system = SystemInfo.from(systemInfoDTO);
         if (hasIpmi) {
-            ipmiSystem = Optional.of(new IntegratedLightsOutInfo(this.name, new IPv4Address(systemInfoDTO.getIloAddress()), 5));
+            ipmiSystem = Optional.of(new IntegratedLightsOutInfo(this.clientHostName, new IPv4Address(systemInfoDTO.getIpmiAddress()), 5));
             if (vendor.equals(Vendor.UNKNOWN)) {
             	vendor = Vendor.HPE;
             }
@@ -37,7 +40,7 @@ public class BaseClientDto implements UpdateInformation<SystemInfoDto> {
             ipmiSystem = Optional.empty();
         }
         this.vendor = vendor;
-        log.info("Created Client: " + name);
+        log.info("Created Client: " + clientHostName);
     }
 
     @Override

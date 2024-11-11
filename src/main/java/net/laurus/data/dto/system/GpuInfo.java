@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import net.laurus.data.dto.system.SystemInfoDto.CpuInfoDto.CpuDataDto;
 import net.laurus.util.CpuTempMath;
 
 @Getter

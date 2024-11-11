@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import net.laurus.data.dto.system.SystemInfoDto.MemoryDto;
 
 @Getter
 @Setter
@@ -19,7 +18,7 @@ import net.laurus.data.dto.system.SystemInfoDto.MemoryDto;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemoryInfo implements UpdateInformation<MemoryDto> {
+public class MemoryInfo implements UpdateInformation<MemoryInfoDto> {
 
     private double used;
 
@@ -29,7 +28,7 @@ public class MemoryInfo implements UpdateInformation<MemoryDto> {
 
 
     @Override
-    public void update(MemoryDto updateData) {
+    public void update(MemoryInfoDto updateData) {
     	
     }
 
@@ -37,7 +36,7 @@ public class MemoryInfo implements UpdateInformation<MemoryDto> {
         return new MemoryInfo(used, available, load);
     }
 
-    public static MemoryInfo from(MemoryDto updateData) { 
+    public static MemoryInfo from(MemoryInfoDto updateData) { 
         return new MemoryInfo(updateData.getUsed(), updateData.getAvailable(), updateData.getLoad());
     }
 
