@@ -1,4 +1,4 @@
-name: Docker-Construct-Server
+name: Java-Maven-Release
 
 on:
   push:
@@ -47,6 +47,7 @@ jobs:
     needs: bump-version
     outputs:
       tag: ${{ steps.create_tag.outputs.tag }}
+      jar_path: ${{ steps.build_maven.outputs.jar_path }}
 
     steps:
       - name: Checkout Code
@@ -59,7 +60,13 @@ jobs:
           distribution: 'zulu'
 
       - name: Build with Maven
-        run: mvn clean install
+        id: build_maven
+        run: |
+          mvn clean install
+          # Set the path to the generated .jar file
+          JAR_PATH=$(find target -name "*.jar" | head -n 1)
+          echo "jar_path=$JAR_PATH" >> $GITHUB_ENV
+          echo "jar_path=$JAR_PATH" >> $GITHUB_OUTPUT
 
       - name: Create Git Tag
         id: create_tag
@@ -83,6 +90,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.build.outputs.tag }}
+          files: ${{ needs.build.outputs.jar_path }}
           body: |
             ### New Release ${{ needs.build.outputs.tag }}
 
