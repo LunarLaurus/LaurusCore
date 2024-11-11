@@ -75,48 +75,4 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<build>
-		<plugins>
-			<!-- Maven JAR Plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.2.0</version>
-				<executions>
-					<!-- Default execution to build the main JAR -->
-					<execution>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<classifier>libs</classifier> <!-- Add classifier to
-							distinguish JAR -->
-							<outputDirectory>${project.build.directory}</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<!-- Maven Deploy Plugin for GitHub Packages -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-						<configuration>
-							<altDeploymentRepository>
-								github::default::https://maven.pkg.github.com/LunarLaurus/LaurusCore
-							</altDeploymentRepository>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
-
 </project>

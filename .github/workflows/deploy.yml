@@ -1,0 +1,36 @@
+name: Deploy to GitHub Packages
+
+on:
+  push:
+    tags:
+      - 'v*'  # This triggers the workflow on tags starting with "v"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v2
+      with:
+        java-version: 21
+     
+    - name: Create GitHub Release
+      id: create_release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ needs.build.outputs.tag }}
+        files: ${{ needs.build.outputs.jar_path }}
+        body: |
+            ### New Release ${{ needs.build.outputs.tag }}
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and deploy with Maven
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        mvn clean deploy -DskipTests
