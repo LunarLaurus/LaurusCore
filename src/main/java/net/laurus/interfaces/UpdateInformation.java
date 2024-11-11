@@ -1,6 +1,8 @@
 package net.laurus.interfaces;
 
-public interface UpdateInformation<T> {
+import java.io.Serializable;
+
+public interface UpdateInformation<T> extends Serializable {
 
     public void update(T updateData);
     

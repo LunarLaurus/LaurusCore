@@ -1,5 +1,7 @@
 package net.laurus.data.dto.system;
 
+import java.io.Serializable;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +15,7 @@ import net.laurus.interfaces.UpdateInformation;
 @ToString
 @EqualsAndHashCode
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class SystemInfo implements UpdateInformation<SystemInfoDto> {
+public class SystemInfo implements UpdateInformation<SystemInfoDto>, Serializable {
 
 	CpuInfo cpu;
 

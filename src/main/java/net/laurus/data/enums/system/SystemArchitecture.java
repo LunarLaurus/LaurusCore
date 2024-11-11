@@ -1,11 +1,13 @@
 package net.laurus.data.enums.system;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum SystemArchitecture {
+public enum SystemArchitecture implements Serializable {
 
     X86(0),
     X64(1),

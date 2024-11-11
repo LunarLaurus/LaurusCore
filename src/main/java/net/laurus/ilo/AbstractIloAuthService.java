@@ -1,4 +1,4 @@
-package net.laurus;
+package net.laurus.ilo;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

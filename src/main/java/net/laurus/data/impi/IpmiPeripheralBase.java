@@ -1,5 +1,7 @@
 package net.laurus.data.impi;
 
+import java.io.Serializable;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -13,6 +15,6 @@ import net.laurus.interfaces.UpdateInformation;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public abstract class IpmiPeripheralBase implements UpdateInformation<IpmiInfo> {
+public abstract class IpmiPeripheralBase implements UpdateInformation<IpmiInfo>, Serializable {
 
 }

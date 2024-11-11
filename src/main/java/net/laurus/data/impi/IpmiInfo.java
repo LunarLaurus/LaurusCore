@@ -1,5 +1,6 @@
 package net.laurus.data.impi;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -19,7 +20,7 @@ import net.laurus.network.IPv4Address;
 @EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
-public abstract class IpmiInfo implements UpdateInformation<Object> {
+public abstract class IpmiInfo implements UpdateInformation<Object>, Serializable {
 
     private final String parentHostName;
     private final IPv4Address address;

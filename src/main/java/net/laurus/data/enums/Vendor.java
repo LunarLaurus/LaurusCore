@@ -7,9 +7,11 @@ import java.util.List;
 
 import static java.util.List.of;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @Log
-public enum Vendor {
+public enum Vendor implements Serializable {
 
     HPE(of("HP")),
     DELL(of()),
