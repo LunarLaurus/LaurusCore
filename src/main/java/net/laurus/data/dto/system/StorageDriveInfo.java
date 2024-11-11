@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import net.laurus.data.enums.system.DriveType;
+import net.laurus.interfaces.UpdateInformation;
 
 @Getter
 @Setter

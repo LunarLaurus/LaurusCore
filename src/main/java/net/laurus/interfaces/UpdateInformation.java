@@ -1,4 +1,4 @@
-package net.laurus.data.dto.system;
+package net.laurus.interfaces;
 
 public interface UpdateInformation<T> {
 

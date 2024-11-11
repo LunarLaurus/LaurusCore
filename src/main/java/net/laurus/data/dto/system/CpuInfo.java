@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import net.laurus.interfaces.UpdateInformation;
 
 @Getter
 @Setter
@@ -18,18 +20,13 @@ import lombok.experimental.FieldDefaults;
 @EqualsAndHashCode
 @FieldDefaults(level=AccessLevel.PRIVATE)
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class CpuInfo implements UpdateInformation<CpuInfoDto> {
 
     private int cpuCount;
     private int cpuCoreCount;
     private Map<Integer, CpuDataDto> cpuDataBySocket;
-
-    private CpuInfo(int count, int cores, Map<Integer, CpuDataDto> dataBySocket) {
-        this.cpuCount = count;
-        this.cpuCoreCount = cores;
-        this.cpuDataBySocket = dataBySocket;
-    }
 
     @Override
     public void update(CpuInfoDto updateData) {

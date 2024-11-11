@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import net.laurus.data.dto.system.UpdateInformation;
 import net.laurus.data.enums.IpmiImplementation;
+import net.laurus.interfaces.UpdateInformation;
 import net.laurus.network.IPv4Address;
 
 

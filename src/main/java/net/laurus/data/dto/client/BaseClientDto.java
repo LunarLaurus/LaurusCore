@@ -6,11 +6,11 @@ import lombok.Value;
 import lombok.extern.java.Log;
 import net.laurus.data.dto.system.SystemInfo;
 import net.laurus.data.dto.system.SystemInfoDto;
-import net.laurus.data.dto.system.UpdateInformation;
 import net.laurus.data.enums.Vendor;
 import net.laurus.data.enums.system.SystemArchitecture;
 import net.laurus.data.impi.IpmiInfo;
 import net.laurus.data.impi.ilo.IntegratedLightsOutInfo;
+import net.laurus.interfaces.UpdateInformation;
 import net.laurus.network.IPv4Address;
 
 @Value
