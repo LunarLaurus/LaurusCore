@@ -1,4 +1,4 @@
-package net.laurus.data.enums;
+package net.laurus.data.enums.ilo;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package net.laurus.data.dto;
+package net.laurus.data.dto.ipmi.ilo;
 
 import java.io.Serializable;
 

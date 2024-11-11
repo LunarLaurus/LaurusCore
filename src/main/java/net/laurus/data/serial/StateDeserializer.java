@@ -1,7 +1,7 @@
 package net.laurus.data.serial;
 
 import lombok.NoArgsConstructor;
-import net.laurus.data.enums.State;
+import net.laurus.data.enums.ilo.State;
 import net.laurus.util.EnumDeserializer;
 
 @NoArgsConstructor

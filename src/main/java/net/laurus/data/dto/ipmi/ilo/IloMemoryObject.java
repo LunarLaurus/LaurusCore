@@ -1,4 +1,4 @@
-package net.laurus.data.dto;
+package net.laurus.data.dto.ipmi.ilo;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -15,11 +15,11 @@ import lombok.Setter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import net.laurus.Constant;
-import net.laurus.data.enums.DimmGeneration;
-import net.laurus.data.enums.DimmStatus;
-import net.laurus.data.enums.DimmTechnology;
-import net.laurus.data.enums.ErrorCorrection;
-import net.laurus.data.enums.HpMemoryType;
+import net.laurus.data.enums.ilo.DimmGeneration;
+import net.laurus.data.enums.ilo.DimmStatus;
+import net.laurus.data.enums.ilo.DimmTechnology;
+import net.laurus.data.enums.ilo.ErrorCorrection;
+import net.laurus.data.enums.ilo.HpMemoryType;
 import net.laurus.interfaces.IloUpdatableFeature;
 import net.laurus.network.IPv4Address;
 import net.laurus.util.JsonUtil;

@@ -1,4 +1,4 @@
-package net.laurus.data.enums;
+package net.laurus.data.enums.ilo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

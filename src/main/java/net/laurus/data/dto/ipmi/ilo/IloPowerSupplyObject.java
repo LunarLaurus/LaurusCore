@@ -1,4 +1,4 @@
-package net.laurus.data.dto;
+package net.laurus.data.dto.ipmi.ilo;
 
 import java.io.Serializable;
 
@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.Builder;
 import lombok.Data;
-import net.laurus.data.enums.Health;
-import net.laurus.data.enums.State;
+import net.laurus.data.enums.ilo.Health;
+import net.laurus.data.enums.ilo.State;
 import net.laurus.interfaces.IloUpdatableFeature;
 import net.laurus.network.IPv4Address;
 import net.laurus.util.JsonUtil;

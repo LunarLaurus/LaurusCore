@@ -72,6 +72,13 @@ public class NetworkUtil {
         return true;
     }
 
+	public static boolean isZeroIPAddress(String ipAddress) {
+		if (ipAddress == null) {
+			return true;
+		}
+		return ipAddress.trim().equals("0.0.0.0");
+	}
+
     public static boolean isValidOctetValue(int value) {
         return value >= 0 && value <= 255;
     }
