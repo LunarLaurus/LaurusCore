@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   bump-version:
@@ -12,15 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       java_version: ${{ steps.get_version.outputs.java_version }}
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup JDK 21
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'zulu'
 
       - name: Get and Bump Java Version
@@ -48,15 +46,14 @@ jobs:
     outputs:
       tag: ${{ steps.create_tag.outputs.tag }}
       jar_path: ${{ steps.build_maven.outputs.jar_path }}
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup JDK 21
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'zulu'
 
       - name: Build with Maven
@@ -88,6 +85,17 @@ jobs:
 
       - name: Deploy to GitHub Packages
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GitHub Token securely
         run: |
+          # Deploy to GitHub Packages using Maven
           mvn deploy -DskipTests -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/LunarLaurus/LaurusCore
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build.outputs.tag }}
+          files: ${{ needs.build.outputs.jar_path }}
+          body: "Release notes for ${{ needs.build.outputs.tag }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub Token for authentication
