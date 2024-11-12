@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.laurus</groupId>
-	<artifactId>LaurusCore</artifactId>
+	<artifactId>laurus-core</artifactId>
 	<version>0.0.15</version>
 	<packaging>jar</packaging>
 
@@ -58,21 +58,5 @@
 			<url>https://maven.pkg.github.com/lunarlaurus/lauruscore</url>
 		</repository>
 	</distributionManagement>
-
-	<!-- Repositories for dependencies -->
-	<repositories>
-		<repository>
-			<id>github</id>
-			<url>https://maven.pkg.github.com/lunarlaurus/lauruscore</url>
-		</repository>
-	</repositories>
-
-	<!-- Plugin Repository for GitHub Packages -->
-	<pluginRepositories>
-		<pluginRepository>
-			<id>github</id>
-			<url>https://maven.pkg.github.com/lunarlaurus/lauruscore</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 </project>
