@@ -134,4 +134,4 @@ jobs:
         tag_name: ${{ github.ref }}  # Ensure this is a tag or adjust as needed
         files: target/*.jar
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
