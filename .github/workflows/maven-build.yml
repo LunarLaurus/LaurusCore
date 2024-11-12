@@ -123,7 +123,7 @@ jobs:
         run: mvn clean package -DskipTests # Customize flags as needed
 
       - name: Deploy to GitHub Packages
-        run: mvn deploy -DskipTests -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository_owner }}/LaurusCore
+        run: mvn deploy -DskipTests -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/lunarlaurus/lauruscore
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
