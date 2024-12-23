@@ -7,6 +7,7 @@
 	<groupId>net.laurus</groupId>
 	<artifactId>laurus-core</artifactId>
 	<version>0.0.26</version>
+	<packaging>jar</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -61,28 +62,6 @@
 
 	<build>
 		<plugins>
-			<!-- Main JAR Plugin for Library -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.4.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<phase>package</phase>
-						<configuration>
-							<archive>
-								<manifestEntries>
-									<Version>${project.version}</Version>
-								</manifestEntries>
-							</archive>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<!-- Source JAR Plugin (with classifier) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -101,7 +80,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<!-- Javadoc JAR Plugin (with classifier) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
