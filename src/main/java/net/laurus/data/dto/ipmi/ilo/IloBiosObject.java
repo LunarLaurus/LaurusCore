@@ -1,15 +1,16 @@
 package net.laurus.data.dto.ipmi.ilo;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.laurus.interfaces.NetworkData;
 
 @Data
 @NoArgsConstructor
-@SuppressWarnings("serial")
-public class IloBiosObject implements Serializable {
+public class IloBiosObject implements NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
     @JsonProperty(value = "Date")
     String date;

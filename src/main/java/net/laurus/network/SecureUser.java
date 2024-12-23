@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.util.SecretsUtils;
 
 @Getter
@@ -13,7 +14,9 @@ import net.laurus.util.SecretsUtils;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Builder
-public class SecureUser {
+public class SecureUser implements NetworkData {
+
+    private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
 	final String secureUserType;
 	final String username;

@@ -1,6 +1,5 @@
 package net.laurus.data.dto.ipmi.ilo;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -21,18 +20,23 @@ import net.laurus.data.enums.ilo.DimmTechnology;
 import net.laurus.data.enums.ilo.ErrorCorrection;
 import net.laurus.data.enums.ilo.HpMemoryType;
 import net.laurus.interfaces.IloUpdatableFeature;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
 import net.laurus.util.JsonUtil;
 import net.laurus.util.NetworkUtil;
 
 @Data
-@SuppressWarnings("serial")
-public class IloMemoryObject implements IloUpdatableFeature, Serializable {
-
+public class IloMemoryObject implements IloUpdatableFeature, NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
+	
     @Value
     @Builder
-    public static class IloMemoryDimm implements IloUpdatableFeature, Serializable {
-        @NonFinal
+    public static class IloMemoryDimm implements IloUpdatableFeature, NetworkData {
+    	
+    	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
+    	
+    	@NonFinal
         @Setter
         DimmStatus status;
         DimmLocation location;
@@ -54,8 +58,11 @@ public class IloMemoryObject implements IloUpdatableFeature, Serializable {
         long lastUpdateTime;
 
         @Value
-        public static class DimmLocation implements Serializable {
-            int processorId;
+        public static class DimmLocation implements NetworkData {
+        	
+        	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
+        	
+        	int processorId;
             int dimmId;
 
             private static DimmLocation from(String internalName) {

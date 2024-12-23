@@ -1,21 +1,22 @@
 package net.laurus.data.dto.ipmi.ilo;
 
-import java.io.Serializable;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.Value;
 import net.laurus.Constant;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
 import net.laurus.util.JsonUtil;
 import net.laurus.util.NetworkUtil;
 
 @Value
-@SuppressWarnings("serial")
-public class IloLicenseObject implements Serializable {
-
-    String license;
+public class IloLicenseObject implements NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
+	
+	String license;
     String licenseKey;
     String licenseType;
 

@@ -1,14 +1,13 @@
 package net.laurus.ilo;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.java.Log;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
 import net.laurus.util.NetworkUtil;
 import net.laurus.util.XmlToJsonUtil;
@@ -17,9 +16,9 @@ import net.laurus.util.XmlToJsonUtil;
 public class UnauthenticatedEndpoint {
 
     @Value
-    public static class IloNicObject implements Serializable {
-
-        private static final long serialVersionUID = -2278540183458989615L;
+    public static class IloNicObject implements NetworkData {
+    	
+    	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
         int port;
         String description;
         String location;
@@ -31,8 +30,8 @@ public class UnauthenticatedEndpoint {
 
     public static final String suffix = "/xmldata?item=all";
 
-    @SneakyThrows
-    public static UnauthenticatedIloClient getIloClient(IPv4Address ip) {
+    
+    public static UnauthenticatedIloClient getIloClient(IPv4Address ip) throws Exception {
 
         if (ip == null) {
             return null;

@@ -2,7 +2,6 @@ package net.laurus.ilo;
 
 import static net.laurus.Constant.JSON_MAPPER;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +19,7 @@ import net.laurus.data.dto.ipmi.ilo.IloPowerObject;
 import net.laurus.data.dto.ipmi.ilo.IloProcessorSummary;
 import net.laurus.data.dto.ipmi.ilo.IloRestFanObject;
 import net.laurus.ilo.UnauthenticatedEndpoint.IloNicObject;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
 import net.laurus.network.IloUser;
 import net.laurus.util.GeneralUtil;
@@ -28,9 +28,9 @@ import net.laurus.util.NetworkUtil;
 @Data
 @Builder
 @Log
-public class AuthenticatedIloClient implements Serializable {
-
-	private static final long serialVersionUID = 4396305666752192679L;
+public class AuthenticatedIloClient implements NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
 	@NonNull
 	final IPv4Address iloAddress;

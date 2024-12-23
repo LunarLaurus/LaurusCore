@@ -1,14 +1,14 @@
 package net.laurus.data.enums.system;
 
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.laurus.interfaces.NetworkData;
 
 @AllArgsConstructor
 @Getter
-public enum SystemArchitecture implements Serializable {
-
+public enum SystemArchitecture implements NetworkData {
+	
+	
     X86(0),
     X64(1),
     ARM(2),
@@ -18,6 +18,8 @@ public enum SystemArchitecture implements Serializable {
     LOONGARCH64(6),
     ARMV6(7),
     PPC64LE(8);
+	
+	private static final long serialVersionUID = 0;
 
     private final int value;
 

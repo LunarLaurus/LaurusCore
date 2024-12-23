@@ -1,22 +1,23 @@
 package net.laurus.data.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
+import static java.util.List.of;
 
 import java.util.List;
 
-import static java.util.List.of;
-
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
+import net.laurus.interfaces.NetworkData;
 
 @AllArgsConstructor
 @Log
-public enum Vendor implements Serializable {
-
+public enum Vendor implements NetworkData {
+	
     HPE(of("HP")),
     DELL(of()),
     SUPERMICRO(of()),
     UNKNOWN(of());
+	
+	private static final long serialVersionUID = 0;
     
     List<String> alias;
 
