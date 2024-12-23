@@ -6,7 +6,7 @@
 
 	<groupId>net.laurus</groupId>
 	<artifactId>laurus-core</artifactId>
-	<version>0.0.23</version>
+	<version>0.0.24</version>
 	<packaging>jar</packaging>
 
 	<properties>
