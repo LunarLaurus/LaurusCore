@@ -95,7 +95,7 @@
 						<goals>
 							<goal>jar</goal> <!-- Create source JAR -->
 						</goals>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<configuration>
 							<classifier>sources</classifier>
 						</configuration>
@@ -114,7 +114,7 @@
 						<goals>
 							<goal>jar</goal> <!-- Create javadoc JAR -->
 						</goals>
-						<phase>package</phase>
+						<phase>prepare-package</phase>
 						<configuration>
 							<classifier>javadoc</classifier>
 						</configuration>
