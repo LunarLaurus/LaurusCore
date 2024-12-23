@@ -62,27 +62,6 @@
 
 	<build>
 		<plugins>
-			<!-- Main JAR Plugin for Library -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.4.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<archive>
-								<manifestEntries>
-									<Version>${project.version}</Version>
-								</manifestEntries>
-							</archive>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<!-- Source JAR Plugin (with classifier) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -92,15 +71,15 @@
 					<execution>
 						<id>attach-sources</id>
 						<goals>
-							<goal>jar</goal>
+							<goal>jar</goal> <!-- Create source JAR -->
 						</goals>
+						<phase>prepare-package</phase>
 						<configuration>
 							<classifier>sources</classifier>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
 			<!-- Javadoc JAR Plugin (with classifier) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -110,8 +89,9 @@
 					<execution>
 						<id>attach-javadocs</id>
 						<goals>
-							<goal>jar</goal>
+							<goal>jar</goal> <!-- Create javadoc JAR -->
 						</goals>
+						<phase>prepare-package</phase>
 						<configuration>
 							<classifier>javadoc</classifier>
 						</configuration>
