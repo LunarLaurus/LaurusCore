@@ -18,6 +18,7 @@ import net.laurus.data.dto.ipmi.ilo.IloMemoryObject;
 import net.laurus.data.dto.ipmi.ilo.IloPowerObject;
 import net.laurus.data.dto.ipmi.ilo.IloProcessorSummary;
 import net.laurus.data.dto.ipmi.ilo.IloRestFanObject;
+import net.laurus.data.dto.ipmi.ilo.IloTemperatureSensor;
 import net.laurus.ilo.UnauthenticatedEndpoint.IloNicObject;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
@@ -69,6 +70,8 @@ public class AuthenticatedIloClient implements NetworkData {
     final IloMemoryObject memory;
 	@NonNull
     List<IloRestFanObject> fans;
+	@NonNull
+    List<IloTemperatureSensor> thermalSensors;
 	@NonNull
     IloPowerObject powerData;
 	@NonNull
@@ -130,6 +133,7 @@ public class AuthenticatedIloClient implements NetworkData {
 
             JsonNode systemNode = JSON_MAPPER.readTree(system);
             JsonNode biosNode = systemNode.path("Oem").path("Hp").path("Bios");
+            log.info("Bios: "+biosNode.toPrettyString());
             IloBios iloBios = JSON_MAPPER.readValue(biosNode.toPrettyString(), IloBios.class);
             JsonNode processorSummaryNode = systemNode.path("ProcessorSummary");
             IloProcessorSummary cpuData = IloProcessorSummary.from(processorSummaryNode);            
@@ -138,7 +142,7 @@ public class AuthenticatedIloClient implements NetworkData {
                     "https://" + iloAddress.toString() + "/rest/v1/Chassis/1/Power", maybeAuthData);
             String thermal = NetworkUtil.fetchDataFromEndpoint(
                     "https://" + iloAddress.toString() + "/rest/v1/Chassis/1/Thermal", maybeAuthData);
-            
+           
             JsonNode powerNode = JSON_MAPPER.readTree(power);
             JsonNode thermalNode = JSON_MAPPER.readTree(thermal);            
             IloPowerObject iloPower = IloPowerObject.from(powerNode);
@@ -150,6 +154,14 @@ public class AuthenticatedIloClient implements NetworkData {
                     fans.add(fan);
                 }
             }
+            JsonNode temperaturesNode = thermalNode.path("Temperatures");
+            List<IloTemperatureSensor> tempSensors = new LinkedList<>();
+            if (temperaturesNode.isArray()) {
+                for (JsonNode tempSensorNode : temperaturesNode) {
+                	IloTemperatureSensor sensor = IloTemperatureSensor.from(tempSensorNode);
+                	tempSensors.add(sensor);
+                }
+            }
             IloLicenseObject licenseObj = IloLicenseObject.from(iloAddress, authData);
             IloMemoryObject memory = IloMemoryObject.from(iloAddress, authData);
             
@@ -157,6 +169,7 @@ public class AuthenticatedIloClient implements NetworkData {
                     .bios(iloBios)
                     .cpuData(cpuData)
                     .fans(fans)
+                    .thermalSensors(tempSensors)
                     .healthStatus(client.getHealthStatus())
                     .iloAddress(iloAddress)
                     .iloFwBuildDate(client.getIloFwBuildDate())

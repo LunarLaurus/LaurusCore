@@ -1,6 +1,5 @@
 package net.laurus.data.dto.ipmi.ilo;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,13 +8,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.laurus.interfaces.IloUpdatableFeature;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
 
 @Data
 @AllArgsConstructor
-@SuppressWarnings("serial")
-public class IloPowerObject implements IloUpdatableFeature, Serializable {
-
+public class IloPowerObject implements IloUpdatableFeature, NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
+	
     int capacity;
     int consumption;
     int averageConsumedWatts;

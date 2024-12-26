@@ -1,50 +1,53 @@
 package net.laurus.data.dto.ipmi.ilo;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.data.enums.ilo.Health;
+import net.laurus.data.enums.ilo.HpSensorLocation;
 import net.laurus.data.enums.ilo.State;
 import net.laurus.data.enums.ilo.Unit;
 import net.laurus.interfaces.IloUpdatableFeature;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
 import net.laurus.util.JsonUtil;
 
 @Data
 @Slf4j
-public class IloRestFanObject implements IloUpdatableFeature, Serializable {
+public class IloRestFanObject implements IloUpdatableFeature, NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
-    private static final long serialVersionUID = -2035233593894700047L;
-
-    final String id;
+    final String fanName;
     final Integer slotId;
     int currentReading;
     Unit unit;
     State statusState;
     Health statusHealth;
+    final HpSensorLocation location;
     long lastUpdateTime;
 
-	public IloRestFanObject(String id, int currentReading, Unit unit, State statusState, Health statusHealth,
-			long lastUpdateTime) {
-		this.id = id;
-		this.slotId = extractSlotId(id);
+	public IloRestFanObject(String fanName, int currentReading, Unit unit, State statusState,
+			Health statusHealth, HpSensorLocation location) {
+		this.fanName = fanName;
+		this.slotId = extractSlotId(fanName);
 		this.currentReading = currentReading;
 		this.unit = unit;
 		this.statusState = statusState;
 		this.statusHealth = statusHealth;
-		this.lastUpdateTime = lastUpdateTime;
+		this.location = location;
+		this.lastUpdateTime = System.currentTimeMillis();
 	}
+    
+    
 
     public static IloRestFanObject from(JsonNode node) {
-        ((ObjectNode) node).remove("Oem");
         int currentSpeed = node.path("CurrentReading").asInt();
         String fanId = node.path("FanName").asText("Bad Fan Name").trim();
-
         JsonNode statusNode = node.path("Status");
+        JsonNode locationNode = node.path("Oem").path("Hp");
         Health health;
         if (statusNode.has("Health")) {
             health = Health.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
@@ -52,8 +55,10 @@ public class IloRestFanObject implements IloUpdatableFeature, Serializable {
             health = Health.UNKNOWN;
         }
         State state = State.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase());
-        Unit unit = Unit.valueOf(JsonUtil.getSafeTextValueFromNode(node, "Units").toUpperCase());
-        return new IloRestFanObject(fanId, currentSpeed, unit, state, health, System.currentTimeMillis());
+        Unit unit = Unit.valueOf(JsonUtil.getSafeTextValueFromNode(node, "Units").toUpperCase());        
+        HpSensorLocation location = HpSensorLocation.fromString(JsonUtil.getSafeTextValueFromNode(locationNode, "Location"));
+        
+        return new IloRestFanObject(fanId, currentSpeed, unit, state, health, location);
     }
 
     @Override
@@ -84,7 +89,6 @@ public class IloRestFanObject implements IloUpdatableFeature, Serializable {
 
     private final Integer extractSlotId(String id) {
         try {
-        	log.info("Parsing fan id: "+id);
             // Handle both "Fan Block" and "Fan" prefixes
             String cleanedId = id.toLowerCase()
                                  .replaceAll("fan( block)?", "") // Matches "Fan" or "Fan Block"
@@ -94,7 +98,7 @@ public class IloRestFanObject implements IloUpdatableFeature, Serializable {
             return Integer.parseInt(cleanedId);
         } catch (NumberFormatException e) {
             // Fallback: Remove all non-numeric characters and try again
-        	log.info("Fallback: Remove all non-numeric characters: "+id);
+        	log.warn("Fallback: Remove all non-numeric characters: "+id);
             String fallbackId = id.replaceAll("\\D", ""); // Remove non-digit characters
             try {
                 return fallbackId.isEmpty() ? -1 : Integer.parseInt(fallbackId); // Default to -1 if no digits
