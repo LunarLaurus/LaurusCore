@@ -133,8 +133,7 @@ public class AuthenticatedIloClient implements NetworkData {
 
             JsonNode systemNode = JSON_MAPPER.readTree(system);
             JsonNode biosNode = systemNode.path("Oem").path("Hp").path("Bios");
-            log.info("Bios: "+biosNode.toPrettyString());
-            IloBios iloBios = JSON_MAPPER.readValue(biosNode.toPrettyString(), IloBios.class);
+            IloBios iloBios = IloBios.from(biosNode);
             JsonNode processorSummaryNode = systemNode.path("ProcessorSummary");
             IloProcessorSummary cpuData = IloProcessorSummary.from(processorSummaryNode);            
 

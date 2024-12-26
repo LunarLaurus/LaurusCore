@@ -1,7 +1,5 @@
 package net.laurus.data.dto.client;
 
-import java.io.Serializable;
-
 import lombok.Value;
 import lombok.extern.java.Log;
 import net.laurus.data.dto.system.SystemInfo;
@@ -11,14 +9,17 @@ import net.laurus.data.enums.Vendor;
 import net.laurus.data.enums.system.SystemArchitecture;
 import net.laurus.data.impi.IpmiInfo;
 import net.laurus.data.impi.ilo.IntegratedLightsOutInfo;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.UpdateInformation;
 import net.laurus.network.IPv4Address;
 import net.laurus.util.NetworkUtil;
 
 @Value
 @Log
-public class BaseClientDto implements UpdateInformation<SystemInfoDto>, Serializable {
-
+public class BaseClientDto implements UpdateInformation<SystemInfoDto>, NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
+	
     private String clientHostName;
     private SystemArchitecture arch;
     private Vendor vendor;

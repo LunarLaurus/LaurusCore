@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.java.Log;
 import net.laurus.data.enums.IpmiImplementation;
 import net.laurus.data.impi.IpmiInfo;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
 
 @Getter
@@ -19,6 +20,8 @@ import net.laurus.network.IPv4Address;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Log
 public class IntegratedLightsOutInfo extends IpmiInfo {
+
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
     private final List<IloPeripheralBase> iloHardware = new CopyOnWriteArrayList<>();
 

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.UpdateInformation;
 
 @Getter
@@ -24,6 +25,8 @@ import net.laurus.interfaces.UpdateInformation;
 @NoArgsConstructor
 public class CpuInfo implements UpdateInformation<CpuInfoDto> {
 
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
+	
     private int cpuCount;
     private int cpuCoreCount;
     private Map<Integer, CpuDataDto> cpuDataBySocket;

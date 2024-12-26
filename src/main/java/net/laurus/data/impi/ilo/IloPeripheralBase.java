@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import net.laurus.data.impi.IpmiInfo;
 import net.laurus.data.impi.IpmiPeripheralBase;
+import net.laurus.interfaces.NetworkData;
 
 @Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -15,10 +16,12 @@ import net.laurus.data.impi.IpmiPeripheralBase;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 public abstract class IloPeripheralBase extends IpmiPeripheralBase {
+
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 	
 	@Override
 	public final void update(IpmiInfo updateData) {
-		
+		update((IntegratedLightsOutInfo) updateData);
 	}
 	
 	public abstract void update(IntegratedLightsOutInfo updateData);

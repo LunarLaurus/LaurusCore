@@ -1,13 +1,12 @@
 package net.laurus.data.dto.system;
 
-import java.io.Serializable;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.UpdateInformation;
 
 @Getter
@@ -15,7 +14,9 @@ import net.laurus.interfaces.UpdateInformation;
 @ToString
 @EqualsAndHashCode
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class SystemInfo implements UpdateInformation<SystemInfoDto>, Serializable {
+public class SystemInfo implements UpdateInformation<SystemInfoDto> {
+
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
 	CpuInfo cpu;
 

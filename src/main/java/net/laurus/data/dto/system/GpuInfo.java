@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.UpdateInformation;
 import net.laurus.util.CpuTempMath;
 
@@ -25,6 +26,8 @@ import net.laurus.util.CpuTempMath;
 @NoArgsConstructor
 public class GpuInfo implements UpdateInformation<CpuDataDto> {
 
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
+	
     private int cpuId;
     private int coreCount;
     private Map<Integer, Float> coreTemperatures;

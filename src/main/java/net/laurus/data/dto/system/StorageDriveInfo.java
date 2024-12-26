@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import net.laurus.data.enums.system.DriveType;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.UpdateInformation;
 
 @Getter
@@ -21,6 +22,8 @@ import net.laurus.interfaces.UpdateInformation;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StorageDriveInfo implements UpdateInformation<StorageDriveInfoDto> {
+
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
 	private String name;
 	private DriveType driveType;

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.UpdateInformation;
 
 @Getter
@@ -23,6 +24,8 @@ import net.laurus.interfaces.UpdateInformation;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PsuInfo implements UpdateInformation<PsuInfoDto> {
+
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
 	private String name;
 	

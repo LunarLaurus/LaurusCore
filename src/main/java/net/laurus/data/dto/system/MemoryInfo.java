@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.UpdateInformation;
 
 @Getter
@@ -20,6 +21,8 @@ import net.laurus.interfaces.UpdateInformation;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemoryInfo implements UpdateInformation<MemoryInfoDto> {
+
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
     private double used;
 

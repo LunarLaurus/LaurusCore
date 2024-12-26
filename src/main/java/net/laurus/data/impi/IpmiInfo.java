@@ -1,6 +1,5 @@
 package net.laurus.data.impi;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import net.laurus.data.enums.IpmiImplementation;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.UpdateInformation;
 import net.laurus.network.IPv4Address;
 
@@ -20,7 +20,9 @@ import net.laurus.network.IPv4Address;
 @EqualsAndHashCode
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
-public abstract class IpmiInfo implements UpdateInformation<Object>, Serializable {
+public abstract class IpmiInfo implements UpdateInformation<Object> {
+
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
     private final String parentHostName;
     private final IPv4Address address;
