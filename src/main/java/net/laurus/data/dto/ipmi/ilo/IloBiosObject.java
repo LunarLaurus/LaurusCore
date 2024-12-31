@@ -4,34 +4,35 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.laurus.interfaces.IloUpdatableFeature;
+import lombok.NonNull;
 import net.laurus.interfaces.NetworkData;
-import net.laurus.network.IPv4Address;
+import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 
 @Data
 @AllArgsConstructor
-public class IloBiosObject implements IloUpdatableFeature, NetworkData {
-	
+public class IloBiosObject implements IloUpdatableFeatureWithoutAuth {
+
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
-    String date;
-    String version;
-    final String family;
-    long lastUpdateTime;
+	String date;
+	String version;
+	final String family;
+	long lastUpdateTime;
 
-	public static IloBiosObject from(JsonNode biosNode) {
-		String date = biosNode.path("Date").asText();
-		String version = biosNode.path("VersionString").asText();
-		String family = biosNode.path("Family").asText();	
+	public static IloBiosObject from(@NonNull JsonNode biosNode) {
+		String date = biosNode.path("Date").asText("N/A");
+		String version = biosNode.path("VersionString").asText("N/A");
+		String family = biosNode.path("Family").asText("N/A");
 		return new IloBiosObject(date, version, family, System.currentTimeMillis());
 	}
-    
+
 	@Override
-	public void update(IPv4Address ip, String authData, JsonNode biosNode) {
-		date = biosNode.path("Date").asText();
-		version = biosNode.path("VersionString").asText();		
+	public void update(@NonNull JsonNode biosNode) {
+		date = biosNode.path("Date").asText("N/A");
+		version = biosNode.path("VersionString").asText("N/A");
+		lastUpdateTime = System.currentTimeMillis();
 	}
-	
+
 	@Override
 	public int getTimeBetweenUpdates() {
 		return 300;

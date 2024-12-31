@@ -4,7 +4,6 @@ import static net.laurus.Constant.JSON_MAPPER;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -12,15 +11,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.java.Log;
-import net.laurus.data.dto.ipmi.ilo.IloBios;
 import net.laurus.data.dto.ipmi.ilo.IloLicenseObject;
 import net.laurus.data.dto.ipmi.ilo.IloMemoryObject;
+import net.laurus.data.dto.ipmi.ilo.IloOemInformation;
 import net.laurus.data.dto.ipmi.ilo.IloPowerObject;
 import net.laurus.data.dto.ipmi.ilo.IloProcessorSummary;
 import net.laurus.data.dto.ipmi.ilo.IloRestFanObject;
 import net.laurus.data.dto.ipmi.ilo.IloTemperatureSensor;
 import net.laurus.ilo.UnauthenticatedEndpoint.IloNicObject;
 import net.laurus.interfaces.NetworkData;
+import net.laurus.interfaces.update.ilo.IloUpdatableFeature;
 import net.laurus.network.IPv4Address;
 import net.laurus.network.IloUser;
 import net.laurus.util.GeneralUtil;
@@ -29,8 +29,8 @@ import net.laurus.util.NetworkUtil;
 @Data
 @Builder
 @Log
-public class AuthenticatedIloClient implements NetworkData {
-	
+public class AuthenticatedIloClient implements IloUpdatableFeature {
+
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
 	@NonNull
@@ -38,8 +38,7 @@ public class AuthenticatedIloClient implements NetworkData {
 	@NonNull
 	final String iloUuid;
 	@NonNull
-    final IloUser iloUser;	
-
+	final IloUser iloUser;
 	@NonNull
 	final String serialNumber;
 	@NonNull
@@ -49,158 +48,190 @@ public class AuthenticatedIloClient implements NetworkData {
 	@NonNull
 	final String serverUuid;
 	@NonNull
+	String serverHostname;
+	@NonNull
 	final String productId;
 	@NonNull
-	final String iloText;
+	String iloText;
 	@NonNull
-	final String iloVersion;
+	String iloVersion;
 	@NonNull
-	final String iloFwBuildDate;
+	String iloFwBuildDate;
 	@NonNull
 	final String iloSerialNumber;
 	@NonNull
-    List<IloNicObject> nics;
-    int healthStatus;	
-	
+	final IloProcessorSummary cpuData;
 	@NonNull
-    final IloBios bios;
+	final IloMemoryObject memory;
 	@NonNull
-    final IloProcessorSummary cpuData;
+	List<IloNicObject> nics;
 	@NonNull
-    final IloMemoryObject memory;
+	final List<IloRestFanObject> fans;
 	@NonNull
-    List<IloRestFanObject> fans;
+	final List<IloTemperatureSensor> thermalSensors;
 	@NonNull
-    List<IloTemperatureSensor> thermalSensors;
+	final IloPowerObject powerData;
 	@NonNull
-    IloPowerObject powerData;
+	final IloLicenseObject iloLicense;
 	@NonNull
-    final IloLicenseObject license;
-    long lastUpdate;
+	final IloOemInformation oemInformation;
 
-    public void update() {
+	int healthStatus;
+	boolean indicatorLed;
 
-        if (!GeneralUtil.timeDifference(System.currentTimeMillis(), lastUpdate, 2)) {
-            return;
-        }
-        try {
-            // Update Power
-            if (powerData.canUpdate()) {
-                String power = NetworkUtil.fetchDataFromEndpoint("https://"+iloAddress.toString()+"/rest/v1/Chassis/1/Power",
-                        iloUser.getWrappedAuthData());
-                JsonNode powerNode = JSON_MAPPER.readTree(power);
-                powerData.update(null, null, powerNode);
-                setLastUpdate(System.currentTimeMillis());
-            }            
-            
-            // Update Memory
-            if (memory.canUpdate()) {
-                memory.update(getIloAddress(), iloUser.getAuthData(), null);
-            }
-            
-            // Update Fans
-            String thermal = NetworkUtil.fetchDataFromEndpoint("https://"+iloAddress.toString()+"/rest/v1/Chassis/1/Thermal",
-                    iloUser.getWrappedAuthData());
-            JsonNode fanNode = JSON_MAPPER.readTree(thermal).path("Fans");
-            if (fanNode.isArray() && !fans.isEmpty()) {
-                for (int i = 0; i < fanNode.size(); i++) {
-                    JsonNode fanObj = fanNode.get(i);
-                    IloRestFanObject fan = fans.get(i);
-                    if (fan.canUpdate()) {
-                        fan.update(null, null, fanObj);
-                        setLastUpdate(System.currentTimeMillis());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	long lastUpdateTime;
 
-    }
+	public static AuthenticatedIloClient from(IloUser iloUser, IPv4Address iloAddress,
+			UnauthenticatedIloClient client) {
 
-    public static AuthenticatedIloClient from(IloUser iloUser, IPv4Address iloAddress, UnauthenticatedIloClient client) {
+		if (iloUser == null || iloAddress == null) {
+			return null;
+		}
 
-        if (iloUser == null || iloAddress == null) {
-            return null;
-        }
+		try {
+			JsonNode systemNode = getSystemNode(iloUser, iloAddress);
+			String hostnameNodeValue = systemNode.path("HostName").asText();
+			String indicatorLedString = systemNode.path("IndicatorLED").asText();
+			boolean indicatorLed = indicatorLedString != null && indicatorLedString.toLowerCase().equals("on") ? true
+					: false;
+			JsonNode oemHpNode = systemNode.path("Oem").path("Hp");
+			IloOemInformation oem = IloOemInformation.from(oemHpNode);
+			JsonNode processorSummaryNode = systemNode.path("ProcessorSummary");
+			IloProcessorSummary cpuData = IloProcessorSummary.from(processorSummaryNode);
+			JsonNode thermalNode = getThermalNode(iloUser, iloAddress);
+			JsonNode powerNode = getPowerNode(iloUser, iloAddress);
+			IloPowerObject iloPower = IloPowerObject.from(powerNode);
+			JsonNode fanNode = thermalNode.path("Fans");
+			List<IloRestFanObject> fans = new LinkedList<>();
+			if (fanNode.isArray()) {
+				for (JsonNode fanObjectNode : fanNode) {
+					IloRestFanObject fan = IloRestFanObject.from(fanObjectNode);
+					fans.add(fan);
+				}
+			}
+			JsonNode temperaturesNode = thermalNode.path("Temperatures");
+			List<IloTemperatureSensor> tempSensors = new LinkedList<>();
+			if (temperaturesNode.isArray()) {
+				for (JsonNode tempSensorNode : temperaturesNode) {
+					IloTemperatureSensor sensor = IloTemperatureSensor.from(tempSensorNode);
+					tempSensors.add(sensor);
+				}
+			}
+			IloLicenseObject licenseObj = IloLicenseObject.from(getLicenseNode(iloUser, iloAddress));
+			IloMemoryObject memory = IloMemoryObject.from(iloAddress, iloUser.getAuthData());
 
-        try {
-        	String authData = iloUser.getAuthData();
-        	Optional<String> maybeAuthData = iloUser.getWrappedAuthData();
-        	
-            String system = NetworkUtil.fetchDataFromEndpoint(
-                    "https://" + iloAddress.toString() + "/rest/v1/Systems/1", maybeAuthData);
+			AuthenticatedIloClient obj = AuthenticatedIloClient.builder().cpuData(cpuData).oemInformation(oem)
+					.fans(fans).thermalSensors(tempSensors).healthStatus(client.getHealthStatus())
+					.iloAddress(iloAddress).iloFwBuildDate(client.getIloFwBuildDate()).iloLicense(licenseObj)
+					.iloSerialNumber(client.getIloSerialNumber()).iloText(client.getIloText()).iloUser(iloUser)
+					.iloUuid(client.iloUuid).iloVersion(client.getIloVersion()).indicatorLed(indicatorLed)
+					.lastUpdateTime(System.currentTimeMillis()).memory(memory).nics(client.getNics())
+					.powerData(iloPower).productId(client.getProductId()).serialNumber(client.getSerialNumber())
+					.serverHostname(hostnameNodeValue).serverId(client.getServerId())
+					.serverModel(client.getServerModel()).serverUuid(client.getServerUuid()).build();
 
-            JsonNode systemNode = JSON_MAPPER.readTree(system);
-            JsonNode biosNode = systemNode.path("Oem").path("Hp").path("Bios");
-            IloBios iloBios = IloBios.from(biosNode);
-            JsonNode processorSummaryNode = systemNode.path("ProcessorSummary");
-            IloProcessorSummary cpuData = IloProcessorSummary.from(processorSummaryNode);            
+			log.info("Created AuthenticatedIloClient: " + obj.toString());
+			return obj;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 
-            String power = NetworkUtil.fetchDataFromEndpoint(
-                    "https://" + iloAddress.toString() + "/rest/v1/Chassis/1/Power", maybeAuthData);
-            String thermal = NetworkUtil.fetchDataFromEndpoint(
-                    "https://" + iloAddress.toString() + "/rest/v1/Chassis/1/Thermal", maybeAuthData);
-           
-            JsonNode powerNode = JSON_MAPPER.readTree(power);
-            JsonNode thermalNode = JSON_MAPPER.readTree(thermal);            
-            IloPowerObject iloPower = IloPowerObject.from(powerNode);
-            JsonNode fanNode = thermalNode.path("Fans");
-            List<IloRestFanObject> fans = new LinkedList<>();
-            if (fanNode.isArray()) {
-                for (JsonNode fanObjectNode : fanNode) {
-                    IloRestFanObject fan = IloRestFanObject.from(fanObjectNode);
-                    fans.add(fan);
-                }
-            }
-            JsonNode temperaturesNode = thermalNode.path("Temperatures");
-            List<IloTemperatureSensor> tempSensors = new LinkedList<>();
-            if (temperaturesNode.isArray()) {
-                for (JsonNode tempSensorNode : temperaturesNode) {
-                	IloTemperatureSensor sensor = IloTemperatureSensor.from(tempSensorNode);
-                	tempSensors.add(sensor);
-                }
-            }
-            IloLicenseObject licenseObj = IloLicenseObject.from(iloAddress, authData);
-            IloMemoryObject memory = IloMemoryObject.from(iloAddress, authData);
-            
-            AuthenticatedIloClient obj = AuthenticatedIloClient.builder()
-                    .bios(iloBios)
-                    .cpuData(cpuData)
-                    .fans(fans)
-                    .thermalSensors(tempSensors)
-                    .healthStatus(client.getHealthStatus())
-                    .iloAddress(iloAddress)
-                    .iloFwBuildDate(client.getIloFwBuildDate())
-                    .iloSerialNumber(client.getIloSerialNumber())
-                    .iloText(client.getIloText())
-                    .iloUser(iloUser)
-                    .iloUuid(client.iloUuid)
-                    .iloVersion(client.getIloVersion())
-                    .lastUpdate(System.currentTimeMillis())
-                    .license(licenseObj)
-                    .memory(memory)
-                    .nics(client.getNics())
-                    .powerData(iloPower)
-                    .productId(client.getProductId())
-                    .serialNumber(client.getSerialNumber())
-                    .serverId(client.getServerId())
-                    .serverModel(client.getServerModel())
-                    .serverUuid(client.getServerUuid())
-                    .build();
-            
-            log.info("Created AuthenticatedIloClient: "+obj.toString());
-            return obj;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+	}
 
-    }
-    
-    public void updateFieldsFromUnauthenticatedIloClient(UnauthenticatedIloClient client) {
-    	healthStatus = client.getHealthStatus();
-    	nics = client.getNics();
-    }
+	private static JsonNode getJsonNode(IloUser iloUser, IPv4Address iloAddress, String address) throws Exception {
+		return JSON_MAPPER.readTree(NetworkUtil.fetchDataFromEndpoint(address, iloUser.getWrappedAuthData()));
+	}
+
+	private static JsonNode getSystemNode(IloUser iloUser, IPv4Address iloAddress) throws Exception {
+		return getJsonNode(iloUser, iloAddress, "https://" + iloAddress.toString() + "/rest/v1/Systems/1");
+	}
+
+	private static JsonNode getPowerNode(IloUser iloUser, IPv4Address iloAddress) throws Exception {
+		return getJsonNode(iloUser, iloAddress, "https://" + iloAddress.toString() + "/rest/v1/Chassis/1/Power");
+	}
+
+	private static JsonNode getThermalNode(IloUser iloUser, IPv4Address iloAddress) throws Exception {
+		return getJsonNode(iloUser, iloAddress, "https://" + iloAddress.toString() + "/rest/v1/Chassis/1/Thermal");
+	}
+
+	private static JsonNode getLicenseNode(IloUser iloUser, IPv4Address iloAddress) throws Exception {
+		return getJsonNode(iloUser, iloAddress,
+				"https://" + iloAddress.toString() + "/rest/v1/Managers/1/LicenseService/1");
+	}
+
+	public void updateFieldsFromUnauthenticatedIloClient(UnauthenticatedIloClient client) {
+		healthStatus = client.getHealthStatus();
+		nics = client.getNics();
+	}
+
+	@Override
+	public int getTimeBetweenUpdates() {
+		return 1;
+	}
+
+	public void update() {
+		if (!GeneralUtil.timeDifference(System.currentTimeMillis(), lastUpdateTime, 2)) {
+			return;
+		}
+		try {
+			// Update Power
+			if (powerData.canUpdate()) {
+				JsonNode powerNode = getPowerNode(iloUser, iloAddress);
+				powerData.update(powerNode);
+				setLastUpdateTime(System.currentTimeMillis());
+			}
+
+			// Update Memory
+			if (memory.canUpdate()) {
+				memory.update(getIloAddress(), iloUser.getAuthData());
+			}
+
+			// Update Thermal
+			{
+				JsonNode thermalNode = getThermalNode(iloUser, iloAddress);
+				// Update Fans
+				JsonNode fanNode = thermalNode.path("Fans");
+				if (fanNode.isArray() && !fans.isEmpty()) {
+					for (int i = 0; i < fanNode.size(); i++) {
+						JsonNode fanObj = fanNode.get(i);
+						IloRestFanObject fan = fans.get(i);
+						if (fan.canUpdate()) {
+							fan.update(fanObj);
+							setLastUpdateTime(System.currentTimeMillis());
+						}
+					}
+				}
+				// Update Temperature Sensors
+				JsonNode temperaturesNode = thermalNode.path("Temperatures");
+				if (temperaturesNode.isArray() && !thermalSensors.isEmpty()) {
+					for (int i = 0; i < temperaturesNode.size(); i++) {
+						JsonNode thermalSensorNode = temperaturesNode.get(i);
+						IloTemperatureSensor thermalSensor = thermalSensors.get(i);
+						if (thermalSensor.canUpdate()) {
+							thermalSensor.update(thermalSensorNode);
+							setLastUpdateTime(System.currentTimeMillis());
+						}
+					}
+				}
+			}
+
+			// Update other fields with .update(x, y, z)
+			{
+				JsonNode systemNode = getSystemNode(iloUser, iloAddress);
+
+				serverHostname = systemNode.path("HostName").asText();
+				String indicatorLedString = systemNode.path("IndicatorLED").asText();
+				indicatorLed = indicatorLedString != null && indicatorLedString.toLowerCase().equals("on") ? true
+						: false;
+			}
+
+			iloLicense.update(getLicenseNode(iloUser, iloAddress));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 }

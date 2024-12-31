@@ -4,16 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import net.laurus.data.enums.ilo.Health;
 import net.laurus.data.enums.ilo.State;
-import net.laurus.interfaces.IloUpdatableFeature;
 import net.laurus.interfaces.NetworkData;
-import net.laurus.network.IPv4Address;
+import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 import net.laurus.util.JsonUtil;
 
 @Data
 @Builder
-public class IloPowerSupplyObject implements IloUpdatableFeature, NetworkData {
+public class IloPowerSupplyObject implements IloUpdatableFeatureWithoutAuth {
 	
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
     private static final String NA = "N/A";
@@ -34,7 +34,7 @@ public class IloPowerSupplyObject implements IloUpdatableFeature, NetworkData {
     State state;
     long lastUpdateTime;
 
-    public static IloPowerSupplyObject from(JsonNode node) {
+    public static IloPowerSupplyObject from(@NonNull JsonNode node) {
 
         JsonNode oem_hp = node.path("Oem").path("Hp");
         int bayNumber = oem_hp.path("BayNumber").asInt();
@@ -78,7 +78,7 @@ public class IloPowerSupplyObject implements IloUpdatableFeature, NetworkData {
     }
 
     @Override
-    public void update(IPv4Address ip, String authData, JsonNode node) {
+    public void update(@NonNull JsonNode node) {
         JsonNode statusNode = node.path("Status");
         this.setHealth(Health.valueOf(statusNode.path("Health").asText().toUpperCase()));
         this.setState(State.valueOf(statusNode.path("State").asText().toUpperCase()));

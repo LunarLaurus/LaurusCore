@@ -1,13 +1,9 @@
-package net.laurus.interfaces;
+package net.laurus.interfaces.update;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
-import net.laurus.network.IPv4Address;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.util.GeneralUtil;
 
-public interface IloUpdatableFeature {
-
-    public void update(IPv4Address ip, String authData, JsonNode node);
+public interface UpdatableFeature extends NetworkData {
 
     public default boolean canUpdate() {
         return GeneralUtil.timeDifference(System.currentTimeMillis(), getLastUpdateTime(), getTimeBetweenUpdates());

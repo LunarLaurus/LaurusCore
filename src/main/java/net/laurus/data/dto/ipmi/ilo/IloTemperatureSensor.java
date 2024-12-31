@@ -4,19 +4,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
 import net.laurus.data.enums.ilo.Health;
 import net.laurus.data.enums.ilo.HpSensorPhysicalContext;
 import net.laurus.data.enums.ilo.State;
 import net.laurus.data.enums.ilo.TemperatureUnit;
-import net.laurus.interfaces.IloUpdatableFeature;
 import net.laurus.interfaces.NetworkData;
-import net.laurus.network.IPv4Address;
+import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 import net.laurus.util.JsonUtil;
 
 @Data
 @AllArgsConstructor
-public class IloTemperatureSensor implements IloUpdatableFeature, NetworkData {
-	
+public class IloTemperatureSensor implements IloUpdatableFeatureWithoutAuth {
+
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
 	final private String name;
@@ -38,7 +38,7 @@ public class IloTemperatureSensor implements IloUpdatableFeature, NetworkData {
 
 	long lastUpdateTime;
 
-	public static IloTemperatureSensor from(JsonNode node) {
+	public static IloTemperatureSensor from(@NonNull JsonNode node) {
 		int currentReading = node.path("CurrentReading").asInt();
 		int readingCelcius = node.path("ReadingCelsius").asInt();
 
@@ -70,21 +70,18 @@ public class IloTemperatureSensor implements IloUpdatableFeature, NetworkData {
 	}
 
 	@Override
-	public void update(IPv4Address ip, String authData, JsonNode node) {
-		if (node != null) {
-			this.currentReading = node.path("CurrentReading").asInt(this.currentReading);
-			this.readingCelsius = node.path("ReadingCelsius").asInt(this.readingCelsius);
-			this.upperThresholdCritical = node.path("UpperThresholdCritical").asInt(this.upperThresholdCritical);
-			this.upperThresholdFatal = node.path("UpperThresholdFatal").asInt(this.upperThresholdFatal);
-			this.upperThresholdUser = node.path("UpperThresholdUser").asInt(this.upperThresholdUser);
-			JsonNode statusNode = node.path("Status");
-			if (statusNode.has("Health")) {
-				this.health = Health.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
-			}
-			this.state = State.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase());
-
-			this.lastUpdateTime = System.currentTimeMillis();
+	public void update(@NonNull JsonNode node) {
+		this.currentReading = node.path("CurrentReading").asInt(this.currentReading);
+		this.readingCelsius = node.path("ReadingCelsius").asInt(this.readingCelsius);
+		this.upperThresholdCritical = node.path("UpperThresholdCritical").asInt(this.upperThresholdCritical);
+		this.upperThresholdFatal = node.path("UpperThresholdFatal").asInt(this.upperThresholdFatal);
+		this.upperThresholdUser = node.path("UpperThresholdUser").asInt(this.upperThresholdUser);
+		JsonNode statusNode = node.path("Status");
+		if (statusNode.has("Health")) {
+			this.health = Health.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
 		}
+		this.state = State.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase());
+		this.lastUpdateTime = System.currentTimeMillis();
 	}
 
 	@Override

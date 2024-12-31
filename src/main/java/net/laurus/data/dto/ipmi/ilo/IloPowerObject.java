@@ -7,13 +7,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.laurus.interfaces.IloUpdatableFeature;
+import lombok.NonNull;
 import net.laurus.interfaces.NetworkData;
-import net.laurus.network.IPv4Address;
+import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 
 @Data
 @AllArgsConstructor
-public class IloPowerObject implements IloUpdatableFeature, NetworkData {
+public class IloPowerObject implements IloUpdatableFeatureWithoutAuth {
 	
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 	
@@ -26,7 +26,7 @@ public class IloPowerObject implements IloUpdatableFeature, NetworkData {
     List<IloPowerSupplyObject> supplies;
     long lastUpdateTime;
 
-    public static IloPowerObject from(JsonNode node) {
+    public static IloPowerObject from(@NonNull JsonNode node) {
         int powerCapacityWatts = node.path("PowerCapacityWatts").asInt();
         int powerConsumedWatts = node.path("PowerConsumedWatts").asInt();
         JsonNode powerMetrics = node.path("PowerMetrics");
@@ -46,7 +46,7 @@ public class IloPowerObject implements IloUpdatableFeature, NetworkData {
     }
 
     @Override
-    public void update(IPv4Address ip, String authData, JsonNode node) {
+    public void update(@NonNull JsonNode node) {
         if (this.canUpdate()) {
             this.setConsumption(node.path("PowerConsumedWatts").asInt());
             JsonNode powerMetrics = node.path("PowerMetrics");
@@ -60,7 +60,7 @@ public class IloPowerObject implements IloUpdatableFeature, NetworkData {
                 if (updateData != null && this.getSupplies().size() > 0) {
                     IloPowerSupplyObject sup = this.getSupplies().get(i);
                     if (sup != null && sup.canUpdate()) {
-                        sup.update(null, null, updateData);
+                        sup.update(updateData);
                     }
                 }
             }
