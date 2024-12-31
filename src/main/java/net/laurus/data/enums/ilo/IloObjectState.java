@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum State implements Serializable {
+public enum IloObjectState implements Serializable {
     ENABLED("Enabled"), DISABLED("Disabled"), OFFLINE("Offline"), IN_TEST("InTest"), STARTING("Starting"),
     ABSENT("Absent"), UNKNOWN("unknown");
 

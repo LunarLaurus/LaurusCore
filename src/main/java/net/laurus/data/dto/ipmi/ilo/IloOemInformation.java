@@ -11,7 +11,7 @@ import net.laurus.data.enums.ilo.IloPostState;
 import net.laurus.data.enums.ilo.IloPowerAutoOn;
 import net.laurus.data.enums.ilo.IloPowerOnDelay;
 import net.laurus.data.enums.ilo.IloVirtualProfile;
-import net.laurus.data.enums.ilo.PowerRegulatorMode;
+import net.laurus.data.enums.ilo.IloPowerRegulatorMode;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 
@@ -27,9 +27,9 @@ public class IloOemInformation implements IloUpdatableFeatureWithoutAuth {
 	final IloHostOSObject hostOS;
 
 	@NonNull
-	PowerRegulatorMode powerRegulatorMode;
+	IloPowerRegulatorMode powerRegulatorMode;
 	@NonNull
-	final List<PowerRegulatorMode> powerRegulatorModesSupported;
+	final List<IloPowerRegulatorMode> powerRegulatorModesSupported;
 	@NonNull
 	final IloTpmObject trustedModules;
 
@@ -67,8 +67,8 @@ public class IloOemInformation implements IloUpdatableFeatureWithoutAuth {
 		IloPowerOnDelay powerOnDelay = IloPowerOnDelay.get(oemNode.path("PowerOnDelay").asText("N/A"));
 		IloVirtualProfile virtualProfile = IloVirtualProfile.get(oemNode.path("VirtualProfile").asText("N/A"));
 		
-		PowerRegulatorMode powerMode = PowerRegulatorMode.from(oemNode.path("PowerRegulatorMode"));
-		List<PowerRegulatorMode> powerRegulatorModesSupported = PowerRegulatorMode.getSupported(oemNode.path("PowerRegulatorModesSupported"));
+		IloPowerRegulatorMode powerMode = IloPowerRegulatorMode.from(oemNode.path("PowerRegulatorMode"));
+		List<IloPowerRegulatorMode> powerRegulatorModesSupported = IloPowerRegulatorMode.getSupported(oemNode.path("PowerRegulatorModesSupported"));
 		IloTpmObject tpm = IloTpmObject.from(oemNode.path("TrustedModules"));
 		
         return new IloOemInformation(iloBios, hostOS, powerMode, 
@@ -92,7 +92,7 @@ public class IloOemInformation implements IloUpdatableFeatureWithoutAuth {
 		powerAutoOn = IloPowerAutoOn.get(oemNode.path("PowerAutoOn").asText("N/A"));
 		powerOnDelay = IloPowerOnDelay.get(oemNode.path("PowerOnDelay").asText("N/A"));
 		virtualProfile = IloVirtualProfile.get(oemNode.path("VirtualProfile").asText("N/A"));		
-		powerRegulatorMode = PowerRegulatorMode.from(oemNode.path("PowerRegulatorMode"));	
+		powerRegulatorMode = IloPowerRegulatorMode.from(oemNode.path("PowerRegulatorMode"));	
 		lastUpdateTime = System.currentTimeMillis();
 	}
 

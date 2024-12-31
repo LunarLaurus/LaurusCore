@@ -1,15 +1,15 @@
 package net.laurus.data.serial;
 
 import lombok.NoArgsConstructor;
-import net.laurus.data.enums.ilo.Health;
+import net.laurus.data.enums.ilo.IloSensorLocation;
 import net.laurus.util.EnumDeserializer;
 
 @NoArgsConstructor
-public class HealthDeserializer extends EnumDeserializer<Health> {
+public class IloSensorLocationDeserializer extends EnumDeserializer<IloSensorLocation> {
 
     @Override
     protected Class<? extends Enum<?>> getEnumType() {
-        return Health.class;
+        return IloSensorLocation.class;
     }
 
 }

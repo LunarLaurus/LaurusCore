@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import net.laurus.data.enums.ilo.Health;
-import net.laurus.data.enums.ilo.State;
+import net.laurus.data.enums.ilo.IloObjectHealth;
+import net.laurus.data.enums.ilo.IloObjectState;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 import net.laurus.util.JsonUtil;
@@ -30,8 +30,8 @@ public class IloPowerSupplyObject implements IloUpdatableFeatureWithoutAuth {
     String type;
     String serialNumber;
     String sparePartNumber;
-    Health health;
-    State state;
+    IloObjectHealth health;
+    IloObjectState state;
     long lastUpdateTime;
 
     public static IloPowerSupplyObject from(@NonNull JsonNode node) {
@@ -41,8 +41,8 @@ public class IloPowerSupplyObject implements IloUpdatableFeatureWithoutAuth {
         boolean hotPlug = oem_hp.path("HotplugCapable").asBoolean();
 
         JsonNode statusNode = node.path("Status");
-        Health health = Health.valueOf(statusNode.path("Health").asText().toUpperCase());
-        State state = State.valueOf(statusNode.path("State").asText().toUpperCase());
+        IloObjectHealth health = IloObjectHealth.valueOf(statusNode.path("Health").asText().toUpperCase());
+        IloObjectState state = IloObjectState.valueOf(statusNode.path("State").asText().toUpperCase());
 
         String fwVersion = JsonUtil.getSafeTextValueFromNode(node, "FirmwareVersion");
         int lastOutput = JsonUtil.getSafeIntValueFromNode(node, "LastPowerOutputWatts");
@@ -55,7 +55,7 @@ public class IloPowerSupplyObject implements IloUpdatableFeatureWithoutAuth {
         String serial = JsonUtil.getSafeTextValueFromNode(node, "SerialNumber");
         String spare = JsonUtil.getSafeTextValueFromNode(node, "SparePartNumber");
 
-        boolean plugged = (NA.equals(fwVersion) || NA.equals(model) || NA.equals(serial) || state.equals(State.ABSENT)) ? false : true;        
+        boolean plugged = (NA.equals(fwVersion) || NA.equals(model) || NA.equals(serial) || state.equals(IloObjectState.ABSENT)) ? false : true;        
         
         return IloPowerSupplyObject.builder()
                 .bayNumber(bayNumber)
@@ -80,8 +80,8 @@ public class IloPowerSupplyObject implements IloUpdatableFeatureWithoutAuth {
     @Override
     public void update(@NonNull JsonNode node) {
         JsonNode statusNode = node.path("Status");
-        this.setHealth(Health.valueOf(statusNode.path("Health").asText().toUpperCase()));
-        this.setState(State.valueOf(statusNode.path("State").asText().toUpperCase()));
+        this.setHealth(IloObjectHealth.valueOf(statusNode.path("Health").asText().toUpperCase()));
+        this.setState(IloObjectState.valueOf(statusNode.path("State").asText().toUpperCase()));
         this.setLastPowerOutputWatts(JsonUtil.getSafeIntValueFromNode(node, "LastPowerOutputWatts"));  
         this.setLastUpdateTime(System.currentTimeMillis());      
     }

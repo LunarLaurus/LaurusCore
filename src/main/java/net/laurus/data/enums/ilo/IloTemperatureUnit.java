@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum TemperatureUnit implements Serializable {
+public enum IloTemperatureUnit implements Serializable {
 	
 	CELSIUS("C"),
 	FAHRENHEIT("F"),

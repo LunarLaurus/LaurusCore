@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum HpSensorLocation {
+public enum IloSensorLocation {
     SYSTEM("System"),
     SYSTEM_BOARD("System Board"),
     IO_BOARD("I/O Board"),
@@ -26,11 +26,11 @@ public enum HpSensorLocation {
 
     private final String expectedJsonValue;
 
-    public static HpSensorLocation fromString(String input) {
+    public static IloSensorLocation fromString(String input) {
         if (input == null || input.isEmpty()) {
             return UNKNOWN;
         }
-        for (HpSensorLocation location : HpSensorLocation.values()) {
+        for (IloSensorLocation location : IloSensorLocation.values()) {
             if (location.expectedJsonValue.equalsIgnoreCase(input)) {
                 return location;
             }

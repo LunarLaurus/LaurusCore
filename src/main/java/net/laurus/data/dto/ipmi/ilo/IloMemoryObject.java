@@ -15,11 +15,11 @@ import lombok.Data;
 import lombok.Setter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
-import net.laurus.data.enums.ilo.DimmGeneration;
-import net.laurus.data.enums.ilo.DimmStatus;
-import net.laurus.data.enums.ilo.DimmTechnology;
-import net.laurus.data.enums.ilo.ErrorCorrection;
+import net.laurus.data.enums.ilo.HpMemoryStatus;
+import net.laurus.data.enums.ilo.HpMemoryErrorCorrection;
 import net.laurus.data.enums.ilo.HpMemoryType;
+import net.laurus.data.enums.system.DimmGeneration;
+import net.laurus.data.enums.system.DimmTechnology;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithAuth;
 import net.laurus.network.IPv4Address;
@@ -39,11 +39,11 @@ public class IloMemoryObject implements IloUpdatableFeatureWithAuth {
 
 		@NonFinal
 		@Setter
-		DimmStatus status;
+		HpMemoryStatus status;
 		DimmLocation location;
 		DimmTechnology type;
 		DimmGeneration generation;
-		ErrorCorrection ecc;
+		HpMemoryErrorCorrection ecc;
 		HpMemoryType hpMemoryType;
 		String id;
 		String name;
@@ -77,13 +77,13 @@ public class IloMemoryObject implements IloUpdatableFeatureWithAuth {
 
 			JsonNode dimmNode = IloMemoryObject.getDimmNode(ip, Optional.of(authData), node);
 
-			DimmStatus status = DimmStatus.get(JsonUtil.getSafeTextValueFromNode(dimmNode, "DIMMStatus").toUpperCase());
+			HpMemoryStatus status = HpMemoryStatus.get(JsonUtil.getSafeTextValueFromNode(dimmNode, "DIMMStatus").toUpperCase());
 			DimmLocation loc = DimmLocation.from(JsonUtil.getSafeTextValueFromNode(dimmNode, "SocketLocator"));
 			DimmTechnology tech = DimmTechnology
 					.valueOf(JsonUtil.getSafeTextValueFromNode(dimmNode, "DIMMTechnology").toUpperCase());
 			DimmGeneration gen = DimmGeneration
 					.valueOf(JsonUtil.getSafeTextValueFromNode(dimmNode, "DIMMType").toUpperCase());
-			ErrorCorrection ecc = ErrorCorrection
+			HpMemoryErrorCorrection ecc = HpMemoryErrorCorrection
 					.get(JsonUtil.getSafeTextValueFromNode(dimmNode, "ErrorCorrection").toUpperCase());
 			HpMemoryType hpMem = HpMemoryType
 					.valueOf(JsonUtil.getSafeTextValueFromNode(dimmNode, "HPMemoryType").toUpperCase());
@@ -111,7 +111,7 @@ public class IloMemoryObject implements IloUpdatableFeatureWithAuth {
 			JsonNode dimmNode;
 			try {
 				dimmNode = getDimmNode(ip, Optional.of(authData));
-				DimmStatus stat = DimmStatus
+				HpMemoryStatus stat = HpMemoryStatus
 						.get(JsonUtil.getSafeTextValueFromNode(dimmNode, "DIMMStatus").toUpperCase());
 				lastUpdateTime = System.currentTimeMillis();
 				this.setStatus(stat);

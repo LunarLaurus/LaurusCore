@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum HpSensorPhysicalContext {
+public enum IloSensorPhysicalContext {
 	
     ROOM("Room"),
     INTAKE("Intake"),
@@ -31,11 +31,11 @@ public enum HpSensorPhysicalContext {
 
     private final String expectedJsonValue;
 
-    public static HpSensorPhysicalContext fromString(String input) {
+    public static IloSensorPhysicalContext fromString(String input) {
         if (input == null || input.isEmpty()) {
             return UNKNOWN;
         }
-        for (HpSensorPhysicalContext context : HpSensorPhysicalContext.values()) {
+        for (IloSensorPhysicalContext context : IloSensorPhysicalContext.values()) {
             if (context.expectedJsonValue.equalsIgnoreCase(input)) {
                 return context;
             }

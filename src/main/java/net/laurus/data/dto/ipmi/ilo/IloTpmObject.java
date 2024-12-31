@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.Value;
+import net.laurus.data.enums.ilo.IloTpmModuleType;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 import net.laurus.util.JsonUtil;
@@ -55,6 +56,7 @@ public class IloTpmObject implements IloUpdatableFeatureWithoutAuth {
 		private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
 		String status;
+		IloTpmModuleType type;
 		long lastUpdateTime;
 
 		@Override
@@ -64,7 +66,7 @@ public class IloTpmObject implements IloUpdatableFeatureWithoutAuth {
 
 		public static IloTpm from(@NonNull JsonNode tpmDevice) {
 			String status = tpmDevice.get("Status").asText("N/A");
-			return new IloTpm(status, System.currentTimeMillis());
+			return new IloTpm(status, IloTpmModuleType.UNKNOWN, System.currentTimeMillis());
 		}
 
 		@Override

@@ -1,15 +1,15 @@
 package net.laurus.data.serial;
 
 import lombok.NoArgsConstructor;
-import net.laurus.data.enums.ilo.HpSensorPhysicalContext;
+import net.laurus.data.enums.ilo.IloObjectState;
 import net.laurus.util.EnumDeserializer;
 
 @NoArgsConstructor
-public class HpFanPositionDeserializer extends EnumDeserializer<HpSensorPhysicalContext> {
+public class IloObjectStateDeserializer extends EnumDeserializer<IloObjectState> {
 
     @Override
     protected Class<? extends Enum<?>> getEnumType() {
-        return HpSensorPhysicalContext.class;
+        return IloObjectState.class;
     }
 
 }

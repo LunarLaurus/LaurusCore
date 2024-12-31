@@ -106,10 +106,7 @@ public class ProLiantModels {
         
         // Generation 10
         Gen10_DL20(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_20, "e"),
-        Gen10_DL325(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_325, "e"),
-        
-        
-        
+        Gen10_DL325(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_325, "e"),      
         Gen10_DL360(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_360, ""),
         Gen10_DL380(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_380, ""),
         Gen10_DL385(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_385, ""),

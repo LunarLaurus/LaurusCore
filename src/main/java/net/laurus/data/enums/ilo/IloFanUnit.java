@@ -7,6 +7,8 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum Health implements Serializable {
-    OK, WARNING, CRITICAL, UNKNOWN;
+public enum IloFanUnit implements Serializable {
+    RPM("RPM"), PERCENT("%"), UNKNOWN("unknown");
+
+    String name;
 }

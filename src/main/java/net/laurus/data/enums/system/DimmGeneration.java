@@ -1,4 +1,4 @@
-package net.laurus.data.enums.ilo;
+package net.laurus.data.enums.system;
 
 import java.io.Serializable;
 

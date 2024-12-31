@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import net.laurus.data.enums.ilo.Health;
-import net.laurus.data.enums.ilo.HpSensorLocation;
-import net.laurus.data.enums.ilo.State;
-import net.laurus.data.enums.ilo.Unit;
+import net.laurus.data.enums.ilo.IloObjectHealth;
+import net.laurus.data.enums.ilo.IloSensorLocation;
+import net.laurus.data.enums.ilo.IloObjectState;
+import net.laurus.data.enums.ilo.IloFanUnit;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 import net.laurus.util.JsonUtil;
@@ -22,14 +22,14 @@ public class IloRestFanObject implements IloUpdatableFeatureWithoutAuth {
 	final String fanName;
 	final Integer slotId;
 	int currentReading;
-	Unit unit;
-	State statusState;
-	Health statusHealth;
-	final HpSensorLocation location;
+	IloFanUnit unit;
+	IloObjectState statusState;
+	IloObjectHealth statusHealth;
+	final IloSensorLocation location;
 	long lastUpdateTime;
 
-	public IloRestFanObject(String fanName, int currentReading, Unit unit, State statusState, Health statusHealth,
-			HpSensorLocation location) {
+	public IloRestFanObject(String fanName, int currentReading, IloFanUnit unit, IloObjectState statusState, IloObjectHealth statusHealth,
+			IloSensorLocation location) {
 		this.fanName = fanName;
 		this.slotId = extractSlotId(fanName);
 		this.currentReading = currentReading;
@@ -45,15 +45,15 @@ public class IloRestFanObject implements IloUpdatableFeatureWithoutAuth {
 		String fanId = node.path("FanName").asText("Bad Fan Name").trim();
 		JsonNode statusNode = node.path("Status");
 		JsonNode locationNode = node.path("Oem").path("Hp");
-		Health health;
+		IloObjectHealth health;
 		if (statusNode.has("Health")) {
-			health = Health.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
+			health = IloObjectHealth.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
 		} else {
-			health = Health.UNKNOWN;
+			health = IloObjectHealth.UNKNOWN;
 		}
-		State state = State.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase());
-		Unit unit = Unit.valueOf(JsonUtil.getSafeTextValueFromNode(node, "Units").toUpperCase());
-		HpSensorLocation location = HpSensorLocation
+		IloObjectState state = IloObjectState.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase());
+		IloFanUnit unit = IloFanUnit.valueOf(JsonUtil.getSafeTextValueFromNode(node, "Units").toUpperCase());
+		IloSensorLocation location = IloSensorLocation
 				.fromString(JsonUtil.getSafeTextValueFromNode(locationNode, "Location"));
 
 		return new IloRestFanObject(fanId, currentSpeed, unit, state, health, location);
@@ -63,14 +63,14 @@ public class IloRestFanObject implements IloUpdatableFeatureWithoutAuth {
 	public void update(@NonNull JsonNode node) {
 		this.setCurrentReading(node.path("CurrentReading").asInt());
 		JsonNode statusNode = node.path("Status");
-		Health health;
+		IloObjectHealth health;
 		if (statusNode.has("Health")) {
-			health = Health.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
+			health = IloObjectHealth.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
 		} else {
-			health = Health.UNKNOWN;
+			health = IloObjectHealth.UNKNOWN;
 		}
 		this.setStatusHealth(health);
-		this.setStatusState(State.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase()));
+		this.setStatusState(IloObjectState.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase()));
 		this.setLastUpdateTime(System.currentTimeMillis());
 	}
 
@@ -106,7 +106,7 @@ public class IloRestFanObject implements IloUpdatableFeatureWithoutAuth {
 	}
 
 	public boolean isValidForUpdate() {
-		if (statusHealth.equals(Health.OK) && statusState.equals(State.ENABLED)) {
+		if (statusHealth.equals(IloObjectHealth.OK) && statusState.equals(IloObjectState.ENABLED)) {
 			return true;
 		}
 		return false;

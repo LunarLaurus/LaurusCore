@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum PowerRegulatorMode {
+public enum IloPowerRegulatorMode {
 
 	OS_CONTROL("OSControl"),
 	DYNAMIC("Dynamic"),
@@ -20,8 +20,8 @@ public enum PowerRegulatorMode {
 	
 	private final String name;
 
-	public static PowerRegulatorMode from(JsonNode path) {
-		for (PowerRegulatorMode mode : PowerRegulatorMode.values()) {
+	public static IloPowerRegulatorMode from(JsonNode path) {
+		for (IloPowerRegulatorMode mode : IloPowerRegulatorMode.values()) {
 			if (mode.name.equalsIgnoreCase(path.asText("N/A"))) {
 				return mode;
 			}
@@ -29,11 +29,11 @@ public enum PowerRegulatorMode {
 		return UNKNOWN;
 	}
 
-	public static List<PowerRegulatorMode> getSupported(JsonNode path) {
-		List<PowerRegulatorMode> list = new ArrayList<>();
+	public static List<IloPowerRegulatorMode> getSupported(JsonNode path) {
+		List<IloPowerRegulatorMode> list = new ArrayList<>();
 		if (path.isArray()) {
 			for (JsonNode arr : path) {
-				for (PowerRegulatorMode mode : PowerRegulatorMode.values()) {
+				for (IloPowerRegulatorMode mode : IloPowerRegulatorMode.values()) {
 					if (mode.name.equalsIgnoreCase(arr.asText("N/A"))) {
 						list.add(mode);
 					}

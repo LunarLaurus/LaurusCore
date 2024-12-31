@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.java.Log;
+import net.laurus.data.dto.ipmi.ilo.IloBootObject;
 import net.laurus.data.dto.ipmi.ilo.IloLicenseObject;
 import net.laurus.data.dto.ipmi.ilo.IloMemoryObject;
 import net.laurus.data.dto.ipmi.ilo.IloOemInformation;
@@ -18,6 +19,8 @@ import net.laurus.data.dto.ipmi.ilo.IloPowerObject;
 import net.laurus.data.dto.ipmi.ilo.IloProcessorSummary;
 import net.laurus.data.dto.ipmi.ilo.IloRestFanObject;
 import net.laurus.data.dto.ipmi.ilo.IloTemperatureSensor;
+import net.laurus.data.enums.ilo.IloIndicatorLED;
+import net.laurus.data.enums.ilo.IloSystemType;
 import net.laurus.ilo.UnauthenticatedEndpoint.IloNicObject;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeature;
@@ -66,20 +69,27 @@ public class AuthenticatedIloClient implements IloUpdatableFeature {
 	@NonNull
 	final IloMemoryObject memory;
 	@NonNull
-	List<IloNicObject> nics;
-	@NonNull
-	final List<IloRestFanObject> fans;
-	@NonNull
-	final List<IloTemperatureSensor> thermalSensors;
-	@NonNull
 	final IloPowerObject powerData;
 	@NonNull
 	final IloLicenseObject iloLicense;
 	@NonNull
 	final IloOemInformation oemInformation;
+	@NonNull
+	final IloSystemType systemType;
+	@NonNull
+	final IloBootObject iloBootInformation;
+	@NonNull
+	List<IloNicObject> nics;
+	@NonNull
+	final List<IloRestFanObject> fans;
+	@NonNull
+	final List<IloTemperatureSensor> thermalSensors;
+	
+	
 
 	int healthStatus;
-	boolean indicatorLed;
+	IloIndicatorLED indicatorLed;
+	
 
 	long lastUpdateTime;
 
@@ -95,10 +105,12 @@ public class AuthenticatedIloClient implements IloUpdatableFeature {
 			String hostnameNodeValue = systemNode.path("HostName").asText("N/A");
 			String assetTagValue = systemNode.path("AssetTag").asText("N/A");
 			String indicatorLedString = systemNode.path("IndicatorLED").asText("Off");
-			boolean indicatorLed = indicatorLedString != null && indicatorLedString.toLowerCase().equals("on") ? true
-					: false;
 			JsonNode oemHpNode = systemNode.path("Oem").path("Hp");
 			IloOemInformation oem = IloOemInformation.from(oemHpNode);
+			
+			IloSystemType systemType = IloSystemType.get(systemNode.path("SystemType").asText("Unknown"));
+			IloBootObject bootInfo = IloBootObject.from(systemNode.path("Boot"));
+			
 			JsonNode processorSummaryNode = systemNode.path("ProcessorSummary");
 			IloProcessorSummary cpuData = IloProcessorSummary.from(processorSummaryNode);
 			JsonNode thermalNode = getThermalNode(iloUser, iloAddress);
@@ -125,14 +137,15 @@ public class AuthenticatedIloClient implements IloUpdatableFeature {
 
 			AuthenticatedIloClient obj = AuthenticatedIloClient.builder().cpuData(cpuData).oemInformation(oem)
 					.fans(fans).thermalSensors(tempSensors).healthStatus(client.getHealthStatus())
-					.iloAddress(iloAddress).iloFwBuildDate(client.getIloFwBuildDate()).iloLicense(licenseObj)
+					.iloAddress(iloAddress).iloBootInformation(bootInfo).iloFwBuildDate(client.getIloFwBuildDate()).iloLicense(licenseObj)
 					.iloSerialNumber(client.getIloSerialNumber()).iloText(client.getIloText()).iloUser(iloUser)
-					.iloUuid(client.iloUuid).iloVersion(client.getIloVersion()).indicatorLed(indicatorLed)
+					.iloUuid(client.iloUuid).iloVersion(client.getIloVersion()).indicatorLed(IloIndicatorLED.get(indicatorLedString))
 					.lastUpdateTime(System.currentTimeMillis()).memory(memory).nics(client.getNics())
 					.powerData(iloPower).productId(client.getProductId()).serialNumber(client.getSerialNumber())
 					.serverAssetTag(assetTagValue)
 					.serverHostname(hostnameNodeValue).serverId(client.getServerId())
-					.serverModel(client.getServerModel()).serverUuid(client.getServerUuid()).build();
+					.serverModel(client.getServerModel()).serverUuid(client.getServerUuid())
+					.systemType(systemType).build();
 
 			log.info("Created AuthenticatedIloClient: " + obj.toString());
 			return obj;
@@ -225,9 +238,8 @@ public class AuthenticatedIloClient implements IloUpdatableFeature {
 				JsonNode systemNode = getSystemNode(iloUser, iloAddress);
 
 				serverHostname = systemNode.path("HostName").asText();
-				String indicatorLedString = systemNode.path("IndicatorLED").asText();
-				indicatorLed = indicatorLedString != null && indicatorLedString.toLowerCase().equals("on") ? true
-						: false;
+				String indicatorLedString = systemNode.path("IndicatorLED").asText("Off");
+				indicatorLed = IloIndicatorLED.get(indicatorLedString);
 			}
 
 			iloLicense.update(getLicenseNode(iloUser, iloAddress));

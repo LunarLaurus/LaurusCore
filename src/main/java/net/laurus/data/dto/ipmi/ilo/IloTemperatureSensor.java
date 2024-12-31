@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import net.laurus.data.enums.ilo.Health;
-import net.laurus.data.enums.ilo.HpSensorPhysicalContext;
-import net.laurus.data.enums.ilo.State;
-import net.laurus.data.enums.ilo.TemperatureUnit;
+import net.laurus.data.enums.ilo.IloObjectHealth;
+import net.laurus.data.enums.ilo.IloSensorPhysicalContext;
+import net.laurus.data.enums.ilo.IloObjectState;
+import net.laurus.data.enums.ilo.IloTemperatureUnit;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 import net.laurus.util.JsonUtil;
@@ -23,7 +23,7 @@ public class IloTemperatureSensor implements IloUpdatableFeatureWithoutAuth {
 	final private int number;
 	final private int locationXmm;
 	final private int locationYmm;
-	final private HpSensorPhysicalContext physicalContext;
+	final private IloSensorPhysicalContext physicalContext;
 
 	private int currentReading;
 	private int readingCelsius;
@@ -32,9 +32,9 @@ public class IloTemperatureSensor implements IloUpdatableFeatureWithoutAuth {
 	private int upperThresholdFatal;
 	private int upperThresholdUser;
 
-	private Health health;
-	private State state;
-	private TemperatureUnit unit;
+	private IloObjectHealth health;
+	private IloObjectState state;
+	private IloTemperatureUnit unit;
 
 	long lastUpdateTime;
 
@@ -53,15 +53,15 @@ public class IloTemperatureSensor implements IloUpdatableFeatureWithoutAuth {
 		int yPos = locationNode.path("LocationYmm").asInt();
 
 		JsonNode statusNode = node.path("Status");
-		Health health;
+		IloObjectHealth health;
 		if (statusNode.has("Health")) {
-			health = Health.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
+			health = IloObjectHealth.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
 		} else {
-			health = Health.UNKNOWN;
+			health = IloObjectHealth.UNKNOWN;
 		}
-		State state = State.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase());
-		TemperatureUnit unit = TemperatureUnit.valueOf(JsonUtil.getSafeTextValueFromNode(node, "Units").toUpperCase());
-		HpSensorPhysicalContext physicalContext = HpSensorPhysicalContext
+		IloObjectState state = IloObjectState.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase());
+		IloTemperatureUnit unit = IloTemperatureUnit.valueOf(JsonUtil.getSafeTextValueFromNode(node, "Units").toUpperCase());
+		IloSensorPhysicalContext physicalContext = IloSensorPhysicalContext
 				.fromString(JsonUtil.getSafeTextValueFromNode(node, "PhysicalContext").toUpperCase());
 
 		return new IloTemperatureSensor(sensorName, sensorId, xPos, yPos, physicalContext, currentReading,
@@ -78,9 +78,9 @@ public class IloTemperatureSensor implements IloUpdatableFeatureWithoutAuth {
 		this.upperThresholdUser = node.path("UpperThresholdUser").asInt(this.upperThresholdUser);
 		JsonNode statusNode = node.path("Status");
 		if (statusNode.has("Health")) {
-			this.health = Health.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
+			this.health = IloObjectHealth.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "Health").toUpperCase());
 		}
-		this.state = State.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase());
+		this.state = IloObjectState.valueOf(JsonUtil.getSafeTextValueFromNode(statusNode, "State").toUpperCase());
 		this.lastUpdateTime = System.currentTimeMillis();
 	}
 
