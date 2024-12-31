@@ -48,6 +48,8 @@ public class AuthenticatedIloClient implements IloUpdatableFeature {
 	@NonNull
 	final String serverUuid;
 	@NonNull
+	final String serverAssetTag;
+	@NonNull
 	String serverHostname;
 	@NonNull
 	final String productId;
@@ -90,8 +92,9 @@ public class AuthenticatedIloClient implements IloUpdatableFeature {
 
 		try {
 			JsonNode systemNode = getSystemNode(iloUser, iloAddress);
-			String hostnameNodeValue = systemNode.path("HostName").asText();
-			String indicatorLedString = systemNode.path("IndicatorLED").asText();
+			String hostnameNodeValue = systemNode.path("HostName").asText("N/A");
+			String assetTagValue = systemNode.path("AssetTag").asText("N/A");
+			String indicatorLedString = systemNode.path("IndicatorLED").asText("Off");
 			boolean indicatorLed = indicatorLedString != null && indicatorLedString.toLowerCase().equals("on") ? true
 					: false;
 			JsonNode oemHpNode = systemNode.path("Oem").path("Hp");
@@ -127,6 +130,7 @@ public class AuthenticatedIloClient implements IloUpdatableFeature {
 					.iloUuid(client.iloUuid).iloVersion(client.getIloVersion()).indicatorLed(indicatorLed)
 					.lastUpdateTime(System.currentTimeMillis()).memory(memory).nics(client.getNics())
 					.powerData(iloPower).productId(client.getProductId()).serialNumber(client.getSerialNumber())
+					.serverAssetTag(assetTagValue)
 					.serverHostname(hostnameNodeValue).serverId(client.getServerId())
 					.serverModel(client.getServerModel()).serverUuid(client.getServerUuid()).build();
 

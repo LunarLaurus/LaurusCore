@@ -16,14 +16,20 @@ public class IloBiosObject implements IloUpdatableFeatureWithoutAuth {
 
 	String date;
 	String version;
+	String buildNumber;
+	boolean debugBuild;
 	final String family;
 	long lastUpdateTime;
 
 	public static IloBiosObject from(@NonNull JsonNode biosNode) {
+
+		String buildNumber = biosNode.path("BuildNumberString").asText("N/A");
+		boolean debugBuild = biosNode.path("DebugBuild").asBoolean(false);
+
 		String date = biosNode.path("Date").asText("N/A");
 		String version = biosNode.path("VersionString").asText("N/A");
 		String family = biosNode.path("Family").asText("N/A");
-		return new IloBiosObject(date, version, family, System.currentTimeMillis());
+		return new IloBiosObject(date, version, buildNumber, debugBuild, family, System.currentTimeMillis());
 	}
 
 	@Override
