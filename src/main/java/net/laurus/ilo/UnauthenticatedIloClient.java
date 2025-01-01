@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import net.laurus.ilo.UnauthenticatedEndpoint.IloNicObject;
+import net.laurus.interfaces.IloDataClient;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 import net.laurus.network.IPv4Address;
@@ -16,7 +17,7 @@ import net.laurus.util.XmlToJsonUtil;
 
 @Data
 @AllArgsConstructor
-public class UnauthenticatedIloClient implements IloUpdatableFeatureWithoutAuth {
+public class UnauthenticatedIloClient implements IloDataClient, IloUpdatableFeatureWithoutAuth {
 
     private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
     IPv4Address iloAddress;
@@ -45,8 +46,9 @@ public class UnauthenticatedIloClient implements IloUpdatableFeatureWithoutAuth 
         }
         return null;
     }
-    
-    public void updateUnauthenticatedClient() {
+
+    @Override
+    public void update() {
     	update(getUnauthenticatedDataForClient());
     }
 

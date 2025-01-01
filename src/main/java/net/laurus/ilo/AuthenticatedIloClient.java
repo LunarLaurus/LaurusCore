@@ -22,6 +22,7 @@ import net.laurus.data.dto.ipmi.ilo.IloTemperatureSensor;
 import net.laurus.data.enums.ilo.IloIndicatorLED;
 import net.laurus.data.enums.ilo.IloSystemType;
 import net.laurus.ilo.UnauthenticatedEndpoint.IloNicObject;
+import net.laurus.interfaces.IloDataClient;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeature;
 import net.laurus.network.IPv4Address;
@@ -32,7 +33,7 @@ import net.laurus.util.NetworkUtil;
 @Data
 @Builder
 @Log
-public class AuthenticatedIloClient implements IloUpdatableFeature {
+public class AuthenticatedIloClient implements IloDataClient, IloUpdatableFeature {
 
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
