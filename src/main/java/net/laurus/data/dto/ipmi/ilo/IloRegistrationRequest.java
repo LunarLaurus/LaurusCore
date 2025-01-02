@@ -6,10 +6,10 @@ import net.laurus.network.IPv4Address;
 
 @Value
 public class IloRegistrationRequest implements NetworkData {
-	
-	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
-	
-	IPv4Address iloAddress;
-	String hostClientId;
-	
+
+    private static final long serialVersionUID = 2L;
+
+    IPv4Address iloAddress;
+    
 }
+

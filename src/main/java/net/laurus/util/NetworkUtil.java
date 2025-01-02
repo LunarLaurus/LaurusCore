@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -64,57 +65,11 @@ public class NetworkUtil {
 		return "bad-host-name";
 	}
 
-	public static boolean isValidIPAddress(String ipAddress) {
-		String[] octets = ipAddress.split("\\.");
-		if (octets.length != 4) {
-			return false;
-		}
-		for (String octet : octets) {
-			if (!isValidOctetValue(octet)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	public static boolean isZeroIPAddress(String ipAddress) {
 		if (ipAddress == null) {
 			return true;
 		}
 		return ipAddress.trim().equals("0.0.0.0");
-	}
-
-	public static boolean isValidOctetValue(int value) {
-		return value >= 0 && value <= 255;
-	}
-
-	private static boolean isValidOctetValue(String octet) {
-		try {
-			int value = Integer.parseInt(octet);
-			return isValidOctetValue(value);
-		} catch (NumberFormatException e) {
-			return false;
-		}
-	}
-
-	public static int ipAddressToInt(String ipAddress) {
-		String[] octets = ipAddress.split("\\.");
-		int result = 0;
-		for (int i = 0; i < 4; i++) {
-			result |= (Integer.parseInt(octets[i]) << ((3 - i) * 8));
-		}
-		return result;
-	}
-
-	public static String intToIPAddress(int ipAddress) {
-		StringBuilder result = new StringBuilder();
-		for (int i = 3; i >= 0; i--) {
-			result.append((ipAddress >> (i * 8)) & 0xFF);
-			if (i > 0) {
-				result.append(".");
-			}
-		}
-		return result.toString();
 	}
 
 	public static void disableSslVerification() throws Exception {
@@ -300,6 +255,40 @@ public class NetworkUtil {
 
 		return bitmap;
 	}
+	
+	public static CompletableFuture<Bitmap> mapClientsToBitmapAsync(
+	        @NonNull List<IPv4Address> ipv4Addresses,
+	        @NonNull Function<IPv4Address, CompletableFuture<Boolean>> validationFunction,
+	        @NonNull SubnetMask subnetMask,
+	        @NonNull List<IPv4Address> blacklist
+	) {
+	    Bitmap bitmap = new Bitmap(256);
+
+	    // Create a list of async validation tasks
+	    List<CompletableFuture<Void>> tasks = ipv4Addresses.stream()
+	            .filter(ip -> !blacklist.contains(ip)) // Skip blacklisted addresses
+	            .map(ip -> validationFunction.apply(ip)
+	                    .thenAccept(isValid -> {
+	                        if (isValid) {
+	                            log.info("Found Good Client: " + ip.getAddress());
+	                            int index = ipv4ToIndex(ip, subnetMask);
+	                            synchronized (bitmap) {
+	                                bitmap.setBit(index);
+	                            }
+	                        }
+	                    })
+	                    .exceptionally(e -> {
+	                        log.severe("Error processing address " + ip + ": " + e.getMessage());
+                            blacklist.add(ip);
+	                        return null;
+	                    }))
+	            .toList();
+
+	    // Return a CompletableFuture that completes when all tasks finish
+	    return CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0]))
+	            .thenApply(ignored -> bitmap);
+	}
+
 
 	/**
 	 * Converts an IPv4 address to an index in the Bitmap assuming the provided
