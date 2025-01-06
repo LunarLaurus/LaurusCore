@@ -1,5 +1,7 @@
 package net.laurus.network;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -169,4 +171,13 @@ public class IPv4Address implements NetworkData {
     public String getAddress() {
         return get();
     }
+
+	public static List<IPv4Address> fromBitmap(IPv4Address baseAddress, List<Integer> activeIndexes) {
+		List<IPv4Address> activeAddresses = new ArrayList<>();
+		int[] baseOctets = baseAddress.octets;
+		for (int x : activeIndexes) {
+			activeAddresses.add(new IPv4Address(new int[] {baseOctets[0], baseOctets[1], baseOctets[2], x}));
+		}
+		return activeAddresses;
+	}
 }
