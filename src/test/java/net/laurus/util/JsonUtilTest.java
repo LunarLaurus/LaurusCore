@@ -68,6 +68,7 @@ class JsonUtilTest {
 
     @Test
     void testToPrettyJson_ValidObject() throws Exception {
+        @SuppressWarnings("unused")
         Object data = new Object() {
             public String name = "Test";
             public int value = 42;
@@ -80,7 +81,8 @@ class JsonUtilTest {
     }
 
     @Test
-    void testToPrettyJson_InvalidObject() {
+    void testToPrettyJson_InvalidObject() {        
+        @SuppressWarnings("unused")
         Object invalidObject = new Object() {
             // Objects that fail Jackson serialization
             private final Object self = this;
