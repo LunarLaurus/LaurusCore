@@ -16,7 +16,7 @@ import net.laurus.util.NetworkUtil;
 
 @Value
 @Log
-public class BaseClientDto implements UpdateInformation<SystemInfoDto>, NetworkData {
+public class BaseClientDto implements UpdateInformation<SystemInfoDto> {
 	
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 	

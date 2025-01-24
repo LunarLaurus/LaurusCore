@@ -10,7 +10,7 @@ import net.laurus.util.NetworkUtil;
 
 @Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class IloUser extends SecureUser  implements NetworkData {
+public class IloUser extends SecureUser {
 
     private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 

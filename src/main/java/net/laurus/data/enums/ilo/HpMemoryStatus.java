@@ -1,9 +1,8 @@
 package net.laurus.data.enums.ilo;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
-public enum HpMemoryStatus implements Serializable {
+public enum HpMemoryStatus {
 
     UNKNOWN, OTHER, NOT_PRESENT, PRESENT_UNUSED, GOOD_IN_USE, ADDED_BUT_UNUSED, UPGRADED_BUT_UNUSED,
     EXPECTED_BUT_MISSING, DOES_NOT_MATCH, NOT_SUPPORTED, CONFIGURATION_ERROR, DEGRADED, PRESENT_SPARE,

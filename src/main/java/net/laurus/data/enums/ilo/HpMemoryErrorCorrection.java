@@ -1,9 +1,8 @@
 package net.laurus.data.enums.ilo;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
-public enum HpMemoryErrorCorrection implements Serializable {
+public enum HpMemoryErrorCorrection {
 
     NONE, PARITY, SINGLE_BIT_ECC, MULTI_BIT_ECC, CRC;
     
