@@ -2,6 +2,9 @@ package net.laurus.util;
 
 import java.util.HashMap;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class HpUtil {
     
     private static final HashMap<Integer, Boolean> HP_CACHE = new HashMap<>();

@@ -1,7 +1,9 @@
 package net.laurus.util;
 
 import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class SecretsUtils {
 
     /**

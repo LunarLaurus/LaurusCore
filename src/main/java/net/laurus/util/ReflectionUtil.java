@@ -7,8 +7,10 @@ import java.util.logging.Logger;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
-/** Utility class for reflection-related methods */
+import lombok.experimental.UtilityClass;
+
 @SuppressWarnings(value = "all")
+@UtilityClass
 public class ReflectionUtil {
 
     private static final Logger logger = Logger.getLogger(ReflectionUtil.class.getName());

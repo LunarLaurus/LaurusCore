@@ -1,5 +1,8 @@
 package net.laurus.util;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class MathUtil {
 
 	public static int getFanSpeedFromPercentageOf100(float input) {

@@ -7,9 +7,11 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
+import lombok.experimental.UtilityClass;
+import lombok.extern.java.Log;
 
-@Slf4j
+@Log
+@UtilityClass
 public class JsonUtil {
 
     public static String getSafeTextValueFromNode(JsonNode node, String key){
@@ -33,9 +35,9 @@ public class JsonUtil {
         return defaultValue;        
     }
     
-    private static boolean containsInvalidCharacter(@NonNull String text) {
+    static boolean containsInvalidCharacter(@NonNull String text) {
     	if (text.contains("�")) {
-    		log.error("ERROR: Found invalid character in "+text);
+    		log.severe("ERROR: Found invalid character in "+text);
     		return true;
     	}
     	return false;

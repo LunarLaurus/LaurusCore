@@ -5,6 +5,9 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class TimeUtil {
 
 	// Convert uptime (in milliseconds) or Duration to a human-readable format

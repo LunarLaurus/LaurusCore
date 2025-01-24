@@ -6,6 +6,9 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class VersionReader {
 	
 	private static String VERSION;
