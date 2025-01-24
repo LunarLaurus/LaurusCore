@@ -2,9 +2,9 @@ package net.laurus.data.dto.client;
 
 import lombok.Value;
 import lombok.extern.java.Log;
-import net.laurus.data.dto.system.SystemInfo;
-import net.laurus.data.dto.system.SystemInfoDto;
-import net.laurus.data.dto.system.SystemIpmiInfo;
+import net.laurus.data.dto.system.librehw.SystemInfo;
+import net.laurus.data.dto.system.librehw.SystemInfoDto;
+import net.laurus.data.dto.system.librehw.SystemIpmiInfo;
 import net.laurus.data.enums.Vendor;
 import net.laurus.data.enums.system.SystemArchitecture;
 import net.laurus.data.impi.IpmiInfo;

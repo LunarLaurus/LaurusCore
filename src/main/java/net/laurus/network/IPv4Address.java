@@ -1,6 +1,8 @@
 package net.laurus.network;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,12 +32,13 @@ public class IPv4Address implements NetworkData {
     private final int[] octets;
 
     /**
-     * Constructor that initializes an IPv4 address from an array of integers representing the octets.
-     * 
-     * @param oct An array of four integers representing the IPv4 address octets.
+     * Constructor that initializes an IPv4 address from a string in the format "x.x.x.x" where x is an integer.
+     *
+     * @param address The IPv4 address in string format.
+     * @throws IllegalArgumentException If the provided string is not a valid IPv4 address.
      */
-    public IPv4Address(int[] oct) {
-        this(oct[0], oct[1], oct[2], oct[3]);
+    public IPv4Address(String address) {
+        this(parseAddress(address));
     }
 
     /**
@@ -47,30 +50,17 @@ public class IPv4Address implements NetworkData {
      * @param octet4 The fourth octet of the IPv4 address.
      */
     public IPv4Address(int octet1, int octet2, int octet3, int octet4) {
-        this.octets = new int[] { octet1, octet2, octet3, octet4 };
+        this(new int[]{ octet1, octet2, octet3, octet4 });
     }
 
     /**
-     * Constructor that initializes an IPv4 address from a string in the format "x.x.x.x" where x is an integer.
+     * Constructor that initializes an IPv4 address from an array of integers representing the octets.
      * 
-     * @param address The IPv4 address in string format.
-     * @throws IllegalArgumentException If the provided string is not a valid IPv4 address.
+     * @param oct An array of four integers representing the IPv4 address octets.
      */
-    public IPv4Address(String address) {
-        String[] octetStrings = address.split("\\.");
-
-        // Check if the string contains exactly 4 octets
-        if (octetStrings.length != 4) {
-            throw new IllegalArgumentException("Invalid IPv4 address format. " + address);
-        }
-
-        // Validate the address format using regex
-        if (!isValidIPv4(address)) {
-            throw new IllegalArgumentException("Invalid IPv4 address: " + address);
-        }
-
-        // Parse the address string into an array of integers representing the octets
-        octets = parseAddress(address);
+    public IPv4Address(int[] oct) {
+    	validateOctets(oct);
+    	this.octets = oct;
     }
 
     /**
@@ -81,6 +71,7 @@ public class IPv4Address implements NetworkData {
      */
     private static int[] parseAddress(String address) {
         String[] parts = address.split("\\.");
+        validateOctetLength(parts);
         return new int[] {
                 Integer.parseInt(parts[0]),
                 Integer.parseInt(parts[1]),
@@ -97,37 +88,44 @@ public class IPv4Address implements NetworkData {
      */
     public static boolean isValidIPv4(String address) {
         if (address == null) return false;
-
         Matcher matcher = IPV4_PATTERN.matcher(address);
         if (!matcher.matches()) return false;
-
-        // Ensure each octet is in the range 0-255
-        return matcher.results()
-                .mapToInt(m -> Integer.parseInt(m.group()))
-                .allMatch(octet -> octet >= 0 && octet <= 255);
+        String[] parts = address.split("\\.");
+        int[] octets = Arrays.stream(parts).mapToInt(Integer::parseInt).toArray();
+        return validateOctets(octets);
     }
 
+
     /**
-     * Converts the IPv4 address to its 32-bit integer representation.
+     * Converts the IPv4 address to its unsigned 32-bit integer representation.
      * 
-     * @return The 32-bit integer representation of the IPv4 address.
+     * @return The unsigned 32-bit integer representation of the IPv4 address as a long.
      */
-    public int toInteger() {
-        return (octets[0] << 24) | (octets[1] << 16) | (octets[2] << 8) | octets[3];
+    public long toUnsignedInteger() {
+    	if (validateOctets(octets)) {
+        return ((long) (octets[0] & 0xFF) << 24) |
+               ((long) (octets[1] & 0xFF) << 16) |
+               ((long) (octets[2] & 0xFF) << 8) |
+               ((long) (octets[3] & 0xFF));
+    	}
+		return 0;
     }
-
+    
     /**
-     * Converts an integer to an IPv4 address object.
+     * Converts an unsigned integer to an IPv4 address object.
      * 
-     * @param value The integer representation of an IPv4 address.
+     * @param value The unsigned 32-bit integer representation of an IPv4 address.
      * @return The corresponding IPv4Address object.
      */
-    public static IPv4Address fromInteger(int value) {
+    public static IPv4Address fromUnsignedInteger(long value) {
+        if (value < 0 || value > 0xFFFFFFFFL) {
+            throw new IllegalArgumentException("Value must be between 0 and 4294967295 (unsigned 32-bit integer range).");
+        }
         return new IPv4Address(
-                (value >> 24) & 0xFF,
-                (value >> 16) & 0xFF,
-                (value >> 8) & 0xFF,
-                value & 0xFF
+                (int) ((value >> 24) & 0xFF),
+                (int) ((value >> 16) & 0xFF),
+                (int) ((value >> 8) & 0xFF),
+                (int) (value & 0xFF)
         );
     }
 
@@ -137,39 +135,30 @@ public class IPv4Address implements NetworkData {
      * @param other The other IPv4 address to compare with.
      * @param prefixLength The subnet mask prefix length (e.g., 24 for a /24 subnet).
      * @return True if both addresses are in the same subnet, false otherwise.
+     * @throws IllegalArgumentException If the prefix length is not between 0 and 32.
      */
     public boolean isInSameSubnet(IPv4Address other, int prefixLength) {
-        // Create a mask based on the prefix length and check if the two addresses match
-        int mask = ~((1 << (32 - prefixLength)) - 1);
-        return (this.toInteger() & mask) == (other.toInteger() & mask);
+        if (prefixLength < 0 || prefixLength > 32) {
+            throw new IllegalArgumentException("Prefix length must be between 0 and 32.");
+        }
+
+        long mask = prefixLength == 0 ? 0 : ~((1L << (32 - prefixLength)) - 1) & 0xFFFFFFFFL;
+
+        long thisAddress = this.toUnsignedInteger();
+        long otherAddress = other.toUnsignedInteger();
+
+        return (thisAddress & mask) == (otherAddress & mask);
     }
+
 
     /**
      * Returns the string representation of the IPv4 address in the format "x.x.x.x".
      * 
      * @return The IPv4 address as a string.
      */
-    private String get() {
-        return octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3];
-    }
-
-    /**
-     * Converts the IPv4 address to a string representation.
-     * 
-     * @return The IPv4 address in the format "x.x.x.x".
-     */
     @Override
     public String toString() {
-        return get();
-    }
-
-    /**
-     * Returns the string representation of the IPv4 address. This is an alias for the {@link #toString()} method.
-     * 
-     * @return The string representation of the IPv4 address.
-     */
-    public String getAddress() {
-        return get();
+        return octets[0] + "." + octets[1] + "." + octets[2] + "." + octets[3];
     }
 
 	public static List<IPv4Address> fromBitmap(IPv4Address baseAddress, List<Integer> activeIndexes) {
@@ -180,4 +169,51 @@ public class IPv4Address implements NetworkData {
 		}
 		return activeAddresses;
 	}
+	
+	public static boolean validateOctets(int[] octets) {
+        return validateOctetLength(octets) && validateOctetValues(octets);
+	}
+	
+	public static boolean validateOctetValues(int[] octets) {
+        for (int octet : octets) {
+            if (octet < 0 || octet > 255) {
+                throw new IllegalArgumentException("Each octet must be between 0 and 255.");
+            }
+        }	
+        return true;
+	}
+
+	/**
+	 * Validates that the given array is not null and has exactly 4 elements.
+	 *
+	 * @param array The array to validate.
+	 * @return True if the array has exactly 4 elements.
+	 * @throws IllegalArgumentException If the input is null or does not have exactly 4 elements.
+	 */
+	public static boolean validateOctetLength(Object array) {
+	    if (array == null || !array.getClass().isArray() || Array.getLength(array) != 4) {
+	        throw new IllegalArgumentException(
+	            "IPv4 address must have exactly 4 elements. Data: " +
+	            (array == null ? "null" : Arrays.deepToString((Object[]) array))
+	        );
+	    }
+	    return true;
+	}
+	
+	/**
+	 * Calculates the broadcast address for the current IPv4 address given a subnet mask.
+	 * 
+	 * @param prefixLength The subnet mask prefix length.
+	 * @return The broadcast address as an IPv4Address object.
+	 */
+	public IPv4Address getBroadcastAddress(int prefixLength) {
+	    if (prefixLength < 0 || prefixLength > 32) {
+	        throw new IllegalArgumentException("Prefix length must be between 0 and 32.");
+	    }
+	    long mask = prefixLength == 0 ? 0 : ~((1L << (32 - prefixLength)) - 1);
+	    long broadcast = this.toUnsignedInteger() | ~mask;
+	    return fromUnsignedInteger(broadcast);
+	}
+
+
 }

@@ -157,9 +157,9 @@ public class NetworkUtil {
 
 	// Calculate the last IP address in the subnet from the base IP and mask
 	public static IPv4Address calculateNetworkEnd(IPv4Address baseIp, SubnetMask subnetMask) {
-		int base = baseIp.toInteger();
-		int mask = ~subnetMask.toInteger();
-		return IPv4Address.fromInteger(base | mask);
+		long base = baseIp.toUnsignedInteger();
+		long mask = ~subnetMask.toUnsignedInteger();
+		return IPv4Address.fromUnsignedInteger(base | mask);
 	}
 
 	public List<IPv4Address> generateAddressesForSubnet(IPv4Address baseAddress, SubnetMask mask) {
@@ -169,12 +169,12 @@ public class NetworkUtil {
 		Subnet subnet = new Subnet(baseAddress, mask);
 
 		// Calculate the network range
-		int networkStart = subnet.calculateNetworkStart();
-		int networkEnd = subnet.calculateNetworkEnd();
+		long networkStart = subnet.calculateNetworkStart();
+		long networkEnd = subnet.calculateNetworkEnd();
 
 		// Generate all IP addresses within the subnet
-		for (int i = networkStart; i <= networkEnd; i++) {
-			addresses.add(IPv4Address.fromInteger(i));
+		for (long i = networkStart; i <= networkEnd; i++) {
+			addresses.add(IPv4Address.fromUnsignedInteger(i));
 		}
 
 		return addresses;
@@ -240,7 +240,7 @@ public class NetworkUtil {
 			try {
 				boolean result = future.get(); // Get the result of the task
 				if (result) {
-					log.info("Found Good Client: " + ipv4Addresses.get(i).getAddress());
+					log.info("Found Good Client: " + ipv4Addresses.get(i).toString());
 					// Convert the IPv4 address to a bitmap index and set the corresponding bit
 					int index = ipv4ToIndex(ipv4Addresses.get(i), subnetMask);
 					blacklist.add(ipv4Addresses.get(i).hashCode());
@@ -270,7 +270,7 @@ public class NetworkUtil {
 	            .map(ip -> validationFunction.apply(ip)
 	                    .thenAccept(isValid -> {
 	                        if (isValid) {
-	                            log.info("Found Good Client: " + ip.getAddress());
+	                            log.info("Found Good Client: " + ip.toString());
 	                            int index = ipv4ToIndex(ip, subnetMask);
 	                            synchronized (bitmap) {
 	                                bitmap.setBit(index);
@@ -301,18 +301,15 @@ public class NetworkUtil {
 	 *         subnet range.
 	 */
 	private static int ipv4ToIndex(IPv4Address address, SubnetMask subnetMask) {
-		// Convert the IPv4 address to an integer
-		int addressInt = address.toInteger();
+	    // Convert the IPv4 address and subnet mask to unsigned integers
+	    long addressInt = address.toUnsignedInteger();
+	    long subnetMaskInt = subnetMask.toUnsignedInteger();
 
-		// Convert the subnet mask to an integer
-		int subnetMaskInt = subnetMask.toInteger();
+	    // Calculate the host portion of the IP address
+	    long index = addressInt & (~subnetMaskInt & 0xFFFFFFFFL);
 
-		// The index is essentially the host portion of the IP address, which is the
-		// address
-		// masked with the inverse of the subnet mask.
-		int index = addressInt & (~subnetMaskInt); // Get the host portion of the address
-
-		return index;
+	    // Cast the index back to an int, as it's guaranteed to fit within 32 bits
+	    return (int) index;
 	}
 
 	/**
@@ -325,7 +322,7 @@ public class NetworkUtil {
 	 */
 	@SneakyThrows
 	public static boolean ping(IPv4Address ipAddress, int timeout) {
-		InetAddress inetAddress = InetAddress.getByName(ipAddress.getAddress());
+		InetAddress inetAddress = InetAddress.getByName(ipAddress.toString());
 		return inetAddress.isReachable(timeout);
 	}
 

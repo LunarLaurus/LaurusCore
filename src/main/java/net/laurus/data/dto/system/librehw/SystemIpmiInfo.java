@@ -1,4 +1,4 @@
-package net.laurus.data.dto.system;
+package net.laurus.data.dto.system.librehw;
 
 import lombok.Value;
 import net.laurus.data.impi.IpmiInfo;

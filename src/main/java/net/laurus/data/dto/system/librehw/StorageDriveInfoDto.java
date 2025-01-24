@@ -1,4 +1,4 @@
-package net.laurus.data.dto.system;
+package net.laurus.data.dto.system.librehw;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 

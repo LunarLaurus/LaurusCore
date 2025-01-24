@@ -82,7 +82,7 @@ public class UnauthenticatedEndpoint {
 
     public static String getData(IPv4Address ip) throws Exception {
         // Fetch XML data from the endpoint
-        String xmlData = NetworkUtil.fetchDataFromEndpoint("https://" + ip.getAddress() + suffix);
+        String xmlData = NetworkUtil.fetchDataFromEndpoint("https://" + ip.toString() + suffix);
         return xmlData;
     }
 

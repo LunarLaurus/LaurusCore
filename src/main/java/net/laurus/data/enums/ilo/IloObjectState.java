@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public enum IloObjectState implements Serializable {
     ENABLED("Enabled"), DISABLED("Disabled"), OFFLINE("Offline"), IN_TEST("InTest"), STARTING("Starting"),
-    ABSENT("Absent"), UNKNOWN("unknown");
+    ABSENT("Absent"), UNKNOWN("Unknown");
 
     String name;
 }

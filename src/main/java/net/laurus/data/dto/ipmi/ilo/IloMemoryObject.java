@@ -126,7 +126,7 @@ public class IloMemoryObject implements IloUpdatableFeatureWithAuth {
 		}
 
 		private JsonNode getDimmNode(IPv4Address iloAddress, Optional<String> auth) throws Exception {
-			return getJsonNode(iloAddress, auth, "https://" + iloAddress.getAddress() + "/rest/v1/Systems/1/Memory/" + this.name);
+			return getJsonNode(iloAddress, auth, "https://" + iloAddress.toString() + "/rest/v1/Systems/1/Memory/" + this.name);
 		}
 
 	}
@@ -176,7 +176,7 @@ public class IloMemoryObject implements IloUpdatableFeatureWithAuth {
 
 	private static JsonNode getDimmNode(IPv4Address iloAddress, Optional<String> auth, JsonNode dimmNode)
 			throws Exception {
-		return getJsonNode(iloAddress, auth, "https://" + iloAddress.getAddress() + dimmNode.path("href").asText());
+		return getJsonNode(iloAddress, auth, "https://" + iloAddress.toString() + dimmNode.path("href").asText());
 	}
 
 	private static JsonNode getMemoryNode(IPv4Address iloAddress, Optional<String> auth) throws Exception {
