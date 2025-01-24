@@ -1,100 +1,92 @@
 package net.laurus.data.type;
 
+import static java.time.Duration.between;
+import static java.time.ZoneId.systemDefault;
+
 import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 import lombok.Value;
 
+/**
+ * Represents a range of time with a start, end, duration, and scale.
+ */
 @Value
-@RequiredArgsConstructor
 public class TimeRange {
 
-    // Constants for conversions
-    private static final int HOURS_IN_DAY = 24;
-    private static final int DAYS_IN_WEEK = 7;
-    private static final int DAYS_IN_MONTH = 30;      // Approximate month as 30 days
-    private static final int DAYS_IN_YEAR = 365;      // Approximate year as 365 days
-    private static final int YEARS_IN_DECADE = 10;
-    private static final int YEARS_IN_CENTURY = 100;
-    private static final int YEARS_IN_MILLENNIUM = 1000;
+    @NonNull LocalDateTime startTime;
+    @NonNull LocalDateTime endTime;
+    @NonNull Duration duration;
+    @NonNull ChronoUnit scale;
 
-    private final long period;
-    private final ChronoUnit scale;
-
-    // Constructor that accepts LocalDateTime and calculates the duration
-    public TimeRange(LocalDateTime start, LocalDateTime end) {
-        Duration duration = Duration.between(start, end);
-        this.period = duration.toSeconds();
-        this.scale = ChronoUnit.SECONDS; // Default to seconds for precise Duration
+    /**
+     * Constructs a TimeRange using start and end times, defaulting to seconds as the scale.
+     *
+     * @param start The start time (must not be null).
+     * @param end   The end time (must not be null and must be after or equal to start).
+     */
+    public TimeRange(@NonNull LocalDateTime start, @NonNull LocalDateTime end) {
+        this(start, end, ChronoUnit.SECONDS);
     }
 
-    // Calculate start time based on the current time and duration
-    private Instant getStartTimeInstant() {
-        Instant now = Instant.now();
-        return now.minus(calculateDuration());
-    }
-
-    // Returns the current time as the end time
-    private Instant getEndTimeInstant() {
-        return Instant.now();
-    }
-    
-    // Converts Instant to LocalDateTime in the system's default time zone
-    public LocalDateTime getStartTime() {
-        return LocalDateTime.ofInstant(getStartTimeInstant(), ZoneId.systemDefault());
-    }
-
-    // Converts Instant to LocalDateTime in the system's default time zone
-    public LocalDateTime getEndTime() {
-        return LocalDateTime.ofInstant(getEndTimeInstant(), ZoneId.systemDefault());
-    }
-
-    // Return the total duration based on the time unit (scale)
-    public Duration getDuration() {
-        return calculateDuration();
-    }
-
-    // Calculate duration based on supported or unsupported ChronoUnits
-    private Duration calculateDuration() {
-        switch (scale) {
-            case NANOS:
-                return Duration.ofNanos(period);
-            case MICROS:
-                return Duration.of(period * 1_000, ChronoUnit.NANOS); // Convert micros to nanos
-            case MILLIS:
-                return Duration.ofMillis(period);
-            case SECONDS:
-                return Duration.ofSeconds(period);
-            case MINUTES:
-                return Duration.ofMinutes(period);
-            case HOURS:
-                return Duration.ofHours(period);
-            case HALF_DAYS:
-                return Duration.of(period * (HOURS_IN_DAY / 2), ChronoUnit.HOURS); // Convert half-days to hours
-            case DAYS:
-                return Duration.ofDays(period);
-            case WEEKS:
-                return Duration.of(period * DAYS_IN_WEEK, ChronoUnit.DAYS); // Convert weeks to days
-            case MONTHS:
-                return Duration.of(period * DAYS_IN_MONTH, ChronoUnit.DAYS); // Approximate months as 30 days
-            case YEARS:
-                return Duration.of(period * DAYS_IN_YEAR, ChronoUnit.DAYS); // Approximate years as 365 days
-            case DECADES:
-                return Duration.of(period * YEARS_IN_DECADE * DAYS_IN_YEAR, ChronoUnit.DAYS); // Approximate decades as 10 years
-            case CENTURIES:
-                return Duration.of(period * YEARS_IN_CENTURY * DAYS_IN_YEAR, ChronoUnit.DAYS); // Approximate centuries as 100 years
-            case MILLENNIA:
-                return Duration.of(period * YEARS_IN_MILLENNIUM * DAYS_IN_YEAR, ChronoUnit.DAYS); // Approximate millennia as 1000 years
-            case ERAS:
-                throw new UnsupportedOperationException("ChronoUnit.ERAS is not supported for calculating duration.");
-            case FOREVER:
-                throw new UnsupportedOperationException("ChronoUnit.FOREVER represents infinite duration and cannot be calculated.");
-            default:
-                throw new UnsupportedOperationException("Unsupported time unit: " + scale);
+    /**
+     * Constructs a TimeRange using start, end, and a specific ChronoUnit scale.
+     *
+     * @param start The start time (must not be null).
+     * @param end   The end time (must not be null and must be after or equal to start).
+     * @param scale The ChronoUnit scale (must not be null and must be time-based).
+     */
+    public TimeRange(@NonNull LocalDateTime start, @NonNull LocalDateTime end, @NonNull ChronoUnit scale) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Start time cannot be after end time.");
         }
+        if (!scale.isTimeBased()) {
+            throw new IllegalArgumentException("Scale must be a time-based ChronoUnit.");
+        }
+        this.startTime = start;
+        this.endTime = end;
+        this.duration = between(start, end);
+        this.scale = scale;
     }
+
+    /**
+     * Returns the duration of the time range in the specified scale.
+     *
+     * @return The duration in the defined ChronoUnit scale.
+     */
+    public long getDurationInScale() {
+        return scale.between(startTime, endTime);
+    }
+
+    /**
+     * Converts the start time to an Instant in the system default time zone.
+     *
+     * @return The start time as an Instant.
+     */
+    public java.time.Instant toStartInstant() {
+        return startTime.atZone(systemDefault()).toInstant();
+    }
+
+    /**
+     * Converts the end time to an Instant in the system default time zone.
+     *
+     * @return The end time as an Instant.
+     */
+    public java.time.Instant toEndInstant() {
+        return endTime.atZone(systemDefault()).toInstant();
+    }
+
+    /**
+     * Provides a string representation of the time range.
+     *
+     * @return A human-readable description of the time range.
+     */
+    @Override
+    public String toString() {
+        return String.format("TimeRange [%s to %s, duration: %s, scale: %s]",
+                startTime, endTime, duration, scale.name());
+    }
+
 }
