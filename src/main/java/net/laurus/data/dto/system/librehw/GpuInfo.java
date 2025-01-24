@@ -44,7 +44,7 @@ public class GpuInfo implements UpdateInformation<CpuDataDto> {
     @Override
     public void update(CpuDataDto updateData) {
         this.coreTemperatures.clear();        
-        this.coreTemperatures.putAll(CpuTempMath.getCoreTemperatures(cpuId, updateData.getTemperatures()));
+        this.coreTemperatures.putAll(CpuTempMath.getCoreTemperatures(updateData.getTemperatures()));
         this.setCpuPackageTemperature(CpuTempMath.getCpuPackageTemperature(updateData.getTemperatures()));
         this.setCoreAverageTemperature(CpuTempMath.getCoreAverageTemperature(updateData.getTemperatures()));
         this.setCoreMaxTemperature(CpuTempMath.getCoreMaxTemperature(updateData.getTemperatures()));
@@ -55,7 +55,7 @@ public class GpuInfo implements UpdateInformation<CpuDataDto> {
     }
 
     public static GpuInfo from(int cpuId, CpuDataDto dto) { 
-        return new GpuInfo(cpuId, CpuTempMath.countCoresSingleCpu(dto.getTemperatures()), new HashMap<>());
+        return new GpuInfo(cpuId, CpuTempMath.countCoresForSingleCpu(dto.getTemperatures()), new HashMap<>());
     }
 
 }

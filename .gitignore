@@ -41,3 +41,4 @@ mvnw.cmd
 
 # Eclipse build output (useful for Eclipse-based builds)
 bin/
+.vscode/settings.json

@@ -14,7 +14,7 @@ public class JsonUtil {
 
     public static String getSafeTextValueFromNode(JsonNode node, String key){
         JsonNode obj = node.get(key);
-        if (obj != null && obj.isTextual() && containsInvalidCharacter(obj.asText())) {
+        if (obj != null && obj.isTextual() && !containsInvalidCharacter(obj.asText())) {
             String text = obj.asText();
             return text.trim();
         }
