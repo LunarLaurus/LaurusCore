@@ -16,7 +16,7 @@ import net.laurus.network.IPv4Address;
 
 @Value
 @Builder
-public class ClientSystemInfoDto {
+public class ClientCommonSystemDto {
 
 	// System Information
     private String hostname;
@@ -28,8 +28,7 @@ public class ClientSystemInfoDto {
     private ClientCommonMemoryDto memoryInformation;
     
 
-    public static ClientSystemInfoDto from(RustClientData rustClient) {
-
+    public static ClientCommonSystemDto from(RustClientData rustClient) {
 
         // Map to group cores by socketId
         Map<Integer, List<ClientCommonCpuCoreDto>> coresBySocket = new HashMap<>();
@@ -92,7 +91,7 @@ public class ClientSystemInfoDto {
         );
 
         // Build the final ClientSystemInfoDto
-        return ClientSystemInfoDto.builder()
+        return ClientCommonSystemDto.builder()
                 .cpuInformation(cpuDetails)
                 .hostname(rustClient.getSystemInfo().getHostname())
                 .memoryInformation(memoryInfo)
@@ -102,7 +101,7 @@ public class ClientSystemInfoDto {
                 .build();
     }
     
-    public static ClientSystemInfoDto from(EsxiSystemDataDto esxiClient) {
+    public static ClientCommonSystemDto from(EsxiSystemDataDto esxiClient) {
 
         // Map to group cores by socketId
         Map<Integer, List<ClientCommonCpuCoreDto>> coresBySocket = new HashMap<>();
@@ -156,7 +155,7 @@ public class ClientSystemInfoDto {
         );
 
         // Build the final ClientSystemInfoDto
-        return ClientSystemInfoDto.builder()
+        return ClientCommonSystemDto.builder()
                 .cpuInformation(cpuDetails)
                 .hostname(esxiClient.getSystem().getHostname())
                 .memoryInformation(memoryInfo)
