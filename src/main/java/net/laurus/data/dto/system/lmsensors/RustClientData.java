@@ -20,8 +20,8 @@ public class RustClientData {
 		return JSON_MAPPER.readValue(jsonData, RustClientData.class);
 	}
 
-    @JsonProperty("uptime")
-    private SystemUptimeDto uptime;
+    @JsonProperty("system_info")
+    private SystemInfoDto systemInfo;
 
     @JsonProperty("cpu_info")
     private CpuInfoDto cpuInfo;

@@ -88,5 +88,19 @@ public class TimeRange {
         return String.format("TimeRange [%s to %s, duration: %s, scale: %s]",
                 startTime, endTime, duration, scale.name());
     }
+    
+    public static TimeRange createTimeRange(int amount, ChronoUnit unit) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0.");
+        }
+        if (unit == null || !unit.isTimeBased()) {
+            throw new IllegalArgumentException("ChronoUnit must be a valid time-based unit.");
+        }
+
+        LocalDateTime endTime = LocalDateTime.now();
+        LocalDateTime startTime = endTime.minus(amount, unit);
+        return new TimeRange(startTime, endTime);
+    }
+
 
 }
