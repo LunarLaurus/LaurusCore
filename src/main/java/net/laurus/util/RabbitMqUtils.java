@@ -9,12 +9,14 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Utility class for handling RabbitMQ message payloads.
  * Provides serialization, compression, and decompression utilities.
  */
 @UtilityClass
+@Slf4j
 public final class RabbitMqUtils {
 
     /**
@@ -110,6 +112,33 @@ public final class RabbitMqUtils {
      */
     private static boolean isCompressed(byte[] data) {
         return (data != null && data.length > 2 && ((data[0] & 0xff) == 0x1f && (data[1] & 0xff) == 0x8b));
+    }
+
+	/**
+	 * Generic method to process client messages and cache them.
+	 *
+	 * @param clientPayload The received payload as a byte array.
+	 * @param clientType    The class type of the client.
+	 * @param cacheHandler  A handler to process and cache the client.
+	 * @param <T>           The type of client (authenticated or unauthenticated).
+	 */
+	public static <T> void processClientMessage(byte[] clientPayload, Class<T> clientType, FunctionHandler<T> cacheHandler) {
+		try {
+			T client = RabbitMqUtils.receivePayload(clientPayload, clientType);
+			cacheHandler.handle(client);
+		} catch (IOException e) {
+			log.error("Error processing client message: {}", e.getMessage(), e);
+		}
+	}
+
+    /**
+     * Functional interface for handling and caching clients.
+     *
+     * @param <T> The type of client.
+     */
+    @FunctionalInterface
+    public static interface FunctionHandler<T> {
+        void handle(T client);
     }
     
 }
