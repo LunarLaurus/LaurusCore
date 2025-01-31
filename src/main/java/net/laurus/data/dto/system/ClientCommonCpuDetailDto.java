@@ -4,10 +4,13 @@ import java.util.List;
 
 import lombok.Builder;
 import lombok.Value;
+import net.laurus.interfaces.NetworkData;
 
 @Value
 @Builder
-public class ClientCommonCpuDetailDto {
+public class ClientCommonCpuDetailDto implements NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
     // CPU General Info
     private String cpuArch;

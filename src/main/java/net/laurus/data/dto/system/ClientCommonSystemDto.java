@@ -12,12 +12,15 @@ import net.laurus.data.dto.system.esxi.EsxiSystemDataDto;
 import net.laurus.data.dto.system.lmsensors.RustClientData;
 import net.laurus.data.dto.system.lmsensors.RustClientData.CpuPackageDataDto;
 import net.laurus.data.dto.system.lmsensors.RustClientData.CpuPackageDataDto.CpuCoreDataDto;
+import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
 
 @Value
 @Builder
-public class ClientCommonSystemDto {
-
+public class ClientCommonSystemDto implements NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
+	
 	// System Information
     private String hostname;
     private IPv4Address systemIp;    
