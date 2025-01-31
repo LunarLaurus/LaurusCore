@@ -1,12 +1,17 @@
 package net.laurus.data.dto.system;
 
+import static net.laurus.data.enums.OperatingSystem.ESXI;
+import static net.laurus.data.enums.OperatingSystem.PROXMOX;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.laurus.data.dto.system.esxi.EsxiCpuCoreDto;
 import net.laurus.data.dto.system.esxi.EsxiSystemDataDto;
 import net.laurus.data.dto.system.lmsensors.RustClientData;
@@ -15,18 +20,16 @@ import net.laurus.data.dto.system.lmsensors.RustClientData.CpuPackageDataDto.Cpu
 import net.laurus.interfaces.NetworkData;
 import net.laurus.network.IPv4Address;
 
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ClientCommonSystemDto implements NetworkData {
 	
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 	
 	// System Information
-    private String hostname;
-    private IPv4Address systemIp;    
-    private String osVersion;
-
-    private long uptime;
+	private ClientCommonOperatingSystemDto operatingSystem;
     private ClientCommonCpuDetailDto cpuInformation;
     private ClientCommonMemoryDto memoryInformation;
     
@@ -92,15 +95,19 @@ public class ClientCommonSystemDto implements NetworkData {
         		rustClient.getMemoryInfo().getTotal(),
         		rustClient.getMemoryInfo().getUsed()
         );
+        ClientCommonOperatingSystemDto osData = ClientCommonOperatingSystemDto.builder()
+        		.hostname(rustClient.getSystemInfo().getHostname())
+        		.operatingSystem(PROXMOX)
+                .osVersion("Unknown") // TODO - Implement someday
+                .systemIp(new IPv4Address(rustClient.getSystemInfo().getManagementIp()))
+        		.uptime(rustClient.getSystemInfo().getUptime().getTotalSeconds())
+        		.build();
 
         // Build the final ClientSystemInfoDto
         return ClientCommonSystemDto.builder()
                 .cpuInformation(cpuDetails)
-                .hostname(rustClient.getSystemInfo().getHostname())
+                .operatingSystem(osData)
                 .memoryInformation(memoryInfo)
-                .osVersion("Unknown") // TODO - Implement someday
-                .systemIp(new IPv4Address(rustClient.getSystemInfo().getManagementIp()))
-                .uptime(rustClient.getSystemInfo().getUptime().getTotalSeconds())
                 .build();
     }
     
@@ -156,15 +163,20 @@ public class ClientCommonSystemDto implements NetworkData {
                 esxiClient.getSystem().getTotalMemoryBytes(),
                 -1 // TODO (Implement someday)
         );
+        
+        ClientCommonOperatingSystemDto osData = ClientCommonOperatingSystemDto.builder()
+                .hostname(esxiClient.getSystem().getHostname())
+        		.operatingSystem(ESXI)
+                .osVersion(esxiClient.getSystem().getKernelVersion())
+                .systemIp(new IPv4Address(esxiClient.getSystem().getManagementIp()))
+                .uptime(esxiClient.getSystem().getUptimeSeconds())
+        		.build();
 
         // Build the final ClientSystemInfoDto
         return ClientCommonSystemDto.builder()
                 .cpuInformation(cpuDetails)
-                .hostname(esxiClient.getSystem().getHostname())
+                .operatingSystem(osData)
                 .memoryInformation(memoryInfo)
-                .osVersion(esxiClient.getSystem().getKernelVersion())
-                .systemIp(new IPv4Address(esxiClient.getSystem().getManagementIp()))
-                .uptime(esxiClient.getSystem().getUptimeSeconds())
                 .build();
     }
 

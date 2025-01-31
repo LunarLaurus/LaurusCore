@@ -1,11 +1,18 @@
 package net.laurus.data.dto.system;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import net.laurus.interfaces.NetworkData;
 
-@Value
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ClientCommonCpuCoreDto {
+public class ClientCommonCpuCoreDto implements NetworkData {
+	
+	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
     // CPU Core Info
     private int coreId;

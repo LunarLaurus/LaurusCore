@@ -2,7 +2,10 @@ package net.laurus.data.dto.ipmi.ilo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.data.enums.ilo.IloObjectHealth;
@@ -13,19 +16,23 @@ import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 import net.laurus.util.JsonUtil;
 
+
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Slf4j
 public class IloRestFanObject implements IloUpdatableFeatureWithoutAuth {
 
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
-	final String fanName;
-	final Integer slotId;
+	String fanName;
+	Integer slotId;
 	int currentReading;
 	IloFanUnit unit;
 	IloObjectState statusState;
 	IloObjectHealth statusHealth;
-	final IloSensorLocation location;
+	IloSensorLocation location;
 	long lastUpdateTime;
 
 	public IloRestFanObject(String fanName, int currentReading, IloFanUnit unit, IloObjectState statusState, IloObjectHealth statusHealth,

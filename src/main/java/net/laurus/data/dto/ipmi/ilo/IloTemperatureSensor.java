@@ -6,7 +6,9 @@ import static net.laurus.util.JsonUtil.getSafeTextValueFromNode;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.laurus.data.enums.ilo.IloObjectHealth;
 import net.laurus.data.enums.ilo.IloObjectState;
@@ -17,15 +19,17 @@ import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class IloTemperatureSensor implements IloUpdatableFeatureWithoutAuth {
 
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
-	final private String name;
-	final private int number;
-	final private int locationXmm;
-	final private int locationYmm;
-	final private IloSensorPhysicalContext physicalContext;
+	private String name;
+	private int number;
+	private int locationXmm;
+	private int locationYmm;
+	private IloSensorPhysicalContext physicalContext;
 
 	private int currentReading;
 	private int readingCelsius;

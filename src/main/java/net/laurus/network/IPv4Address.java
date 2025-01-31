@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import net.laurus.interfaces.NetworkData;
 
 /**
@@ -20,6 +21,7 @@ import net.laurus.interfaces.NetworkData;
  */
 @Getter
 @EqualsAndHashCode
+@NoArgsConstructor
 public class IPv4Address implements NetworkData {
 
     private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
@@ -29,7 +31,7 @@ public class IPv4Address implements NetworkData {
             "^([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$");
 
     // The IPv4 address stored as an array of integers (octets)
-    private final int[] octets;
+    private int[] octets;
 
     /**
      * Constructor that initializes an IPv4 address from a string in the format "x.x.x.x" where x is an integer.

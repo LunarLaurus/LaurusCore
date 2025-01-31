@@ -10,13 +10,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Value;
 import lombok.experimental.NonFinal;
-import net.laurus.data.enums.ilo.HpMemoryStatus;
 import net.laurus.data.enums.ilo.HpMemoryErrorCorrection;
+import net.laurus.data.enums.ilo.HpMemoryStatus;
 import net.laurus.data.enums.ilo.HpMemoryType;
 import net.laurus.data.enums.system.DimmGeneration;
 import net.laurus.data.enums.system.DimmTechnology;
@@ -27,11 +29,16 @@ import net.laurus.util.JsonUtil;
 import net.laurus.util.NetworkUtil;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class IloMemoryObject implements IloUpdatableFeatureWithAuth {
 
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
 
-	@Value
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
 	@Builder
 	public static class IloMemoryDimm implements IloUpdatableFeatureWithAuth {
 
@@ -131,7 +138,7 @@ public class IloMemoryObject implements IloUpdatableFeatureWithAuth {
 
 	}
 
-	final List<IloMemoryDimm> dimms;
+	List<IloMemoryDimm> dimms;
 	long lastUpdateTime;
 
 	public static IloMemoryObject from(IPv4Address ip, String authData) throws Exception {
@@ -146,7 +153,7 @@ public class IloMemoryObject implements IloUpdatableFeatureWithAuth {
 				t.printStackTrace();
 			}
 		}
-		return new IloMemoryObject(dimms);
+		return IloMemoryObject.builder().dimms(dimms).build();
 
 	}
 

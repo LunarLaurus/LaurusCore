@@ -6,7 +6,9 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.laurus.data.enums.ilo.IloBootSourceOverrideTarget;
 import net.laurus.interfaces.NetworkData;
@@ -14,6 +16,8 @@ import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class IloBootObject implements IloUpdatableFeatureWithoutAuth {
 
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();

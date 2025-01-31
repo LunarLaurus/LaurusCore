@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.laurus.ilo.UnauthenticatedEndpoint.IloNicObject;
 import net.laurus.interfaces.IloDataClient;
@@ -17,6 +18,7 @@ import net.laurus.util.XmlToJsonUtil;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class UnauthenticatedIloClient implements IloDataClient, IloUpdatableFeatureWithoutAuth {
 
     private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
@@ -33,6 +35,7 @@ public class UnauthenticatedIloClient implements IloDataClient, IloUpdatableFeat
     String iloUuid;
     int healthStatus;
     List<IloNicObject> nics;
+    int timeBetweenUpdates = 60;
     long lastUpdateTime;
     
     private JsonNode getUnauthenticatedDataForClient() {
@@ -54,7 +57,7 @@ public class UnauthenticatedIloClient implements IloDataClient, IloUpdatableFeat
 
     @Override
     public int getTimeBetweenUpdates() {
-        return 60;
+        return timeBetweenUpdates;
     }
     
 	@Override

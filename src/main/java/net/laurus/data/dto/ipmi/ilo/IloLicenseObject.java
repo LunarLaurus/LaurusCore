@@ -3,7 +3,9 @@ package net.laurus.data.dto.ipmi.ilo;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
@@ -11,6 +13,8 @@ import net.laurus.util.JsonUtil;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class IloLicenseObject implements IloUpdatableFeatureWithoutAuth {
 
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();

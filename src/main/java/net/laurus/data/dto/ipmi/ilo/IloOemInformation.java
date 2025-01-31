@@ -5,18 +5,20 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import net.laurus.data.enums.ilo.IloPostState;
 import net.laurus.data.enums.ilo.IloPowerAutoOn;
 import net.laurus.data.enums.ilo.IloPowerOnDelay;
-import net.laurus.data.enums.ilo.IloVirtualProfile;
 import net.laurus.data.enums.ilo.IloPowerRegulatorMode;
+import net.laurus.data.enums.ilo.IloVirtualProfile;
 import net.laurus.interfaces.NetworkData;
 import net.laurus.interfaces.update.ilo.IloUpdatableFeatureWithoutAuth;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class IloOemInformation implements IloUpdatableFeatureWithoutAuth {
 	
 	private static final long serialVersionUID = NetworkData.getCurrentVersionHash();
