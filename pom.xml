@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.laurus</groupId>
-  
+
 	<artifactId>laurus-parent</artifactId>
 	<version>0.0.45</version>
 	<packaging>pom</packaging>
@@ -17,7 +17,7 @@
 
 	<properties>
 		<laurus.version>${project.version}</laurus.version>
-		
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
@@ -37,10 +37,36 @@
 			<url>https://maven.pkg.github.com/lunarlaurus/lauruscore</url>
 		</repository>
 	</distributionManagement>
+	
+	<profiles>
+		<profile>
+			<id>github</id>
+			<repositories>
+				<repository>
+					<id>central</id>
+					<url>https://repo1.maven.org/maven2</url>
+				</repository>
+				<repository>
+					<id>lauruscore</id>
+					<url>https://maven.pkg.github.com/LunarLaurus/LaurusCore</url>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+				<repository>
+					<id>lgtmlib</id>
+					<url>https://maven.pkg.github.com/LunarLaurus/laurus-lgtm-lib</url>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
 
 	<dependencyManagement>
 		<dependencies>
-			
+
 			<!-- Spring Boot BOM for dependency management -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
