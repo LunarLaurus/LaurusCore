@@ -5,8 +5,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.laurus</groupId>
+  
 	<artifactId>laurus-parent</artifactId>
-	<version>0.0.44</version>
+	<version>0.0.45</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -33,7 +34,7 @@
 	<distributionManagement>
 		<repository>
 			<id>github</id>
-			<url>https://maven.pkg.github.com/lunarlaurus/lauruscore-parent</url>
+			<url>https://maven.pkg.github.com/lunarlaurus/lauruscore</url>
 		</repository>
 	</distributionManagement>
 
