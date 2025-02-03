@@ -1,0 +1,37 @@
+# Server configuration
+server:
+   port: ${SYSTEM_SPRING_PORT:8080}
+   ssl:
+      enabled: false
+      
+system:
+   obfuscate-secrets: true
+   allowed-ip: ${SYSTEM_ALLOWED_IP:localhost}
+   ilo:   
+      username: ${SYSTEM_ILO_USER:changeme}
+      password: ${SYSTEM_ILO_PASSWORD:changeme}
+      client-timeout-connect: ${SYSTEM_ILO_CLIENT_TIMEOUT_CONNECT:2000}
+      client-timeout-read: ${SYSTEM_ILO_CLIENT_TIMEOUT_READ:1000}
+      network:
+         base-ip: "192.168.0.0"
+         subnet-mask: "255.255.255.0"
+   influxdb:
+      url: ${SYSTEM_INFLUX_URL:localhost:8086}
+      username: ${SYSTEM_INFLUX_USER:changeme}
+      password: ${SYSTEM_INFLUX_PASS:changeme}
+      database: ${SYSTEM_INFLUX_DATABASE:changeme}
+   
+spring:
+   jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+      time-zone: Europe/London
+   jms:
+      pub-sub-domain: true
+   http:
+      converters:
+         preferred-json-mapper: jackson
+   rabbitmq:
+      host: ${SYSTEM_RABBITMQ_ADDRESS:localhost}
+      port: ${SYSTEM_RABBITMQ_PORT:5672}
+      username: ${SYSTEM_RABBITMQ_USER:ChangeMe}
+      password: ${SYSTEM_RABBITMQ_PASSWORD:ChangeMe}

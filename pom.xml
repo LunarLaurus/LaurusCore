@@ -5,61 +5,32 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.laurus</groupId>
-	<artifactId>laurus-core</artifactId>
+
+	<artifactId>laurus-parent</artifactId>
 	<version>0.0.45</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>laurus-core</module>
+		<module>laurus-core-spring</module>
+	</modules>
 
 	<properties>
+		<laurus.version>${project.version}</laurus.version>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<maven.compiler.release>17</maven.compiler.release>
+
+		<spring.version>3.4.1</spring.version>
+		<lombok.version>1.18.36</lombok.version>
+		<jackson.version>2.18.2</jackson.version>
+		<json.version>20240303</json.version>
+		<reflections.version>0.10.2</reflections.version>
+		<junit.version>5.11.4</junit.version>
 	</properties>
 
-	<dependencies>
-		<!-- Lombok for code generation -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.36</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- Jackson Dependencies -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.18.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.18.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20240303</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>0.10.2</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter</artifactId>
-			<version>5.11.4</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
-
-	<!-- GitHub Package Repository for Deployment -->
 	<distributionManagement>
 		<repository>
 			<id>github</id>
@@ -67,57 +38,84 @@
 		</repository>
 	</distributionManagement>
 
-	<build>
-		<plugins>
-			<!-- Source JAR Plugin (with classifier) -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.3.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal> <!-- Create source JAR -->
-						</goals>
-						<phase>prepare-package</phase>
-						<configuration>
-							<classifier>sources</classifier>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Javadoc JAR Plugin (with classifier) -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.11.2</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal> <!-- Create javadoc JAR -->
-						</goals>
-						<phase>prepare-package</phase>
-						<configuration>
-							<classifier>javadoc</classifier>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+	<repositories>
+		<repository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com</url>			
+		</pluginRepository>
+	</pluginRepositories>
+	<profiles>
+		<profile>
+			<id>github</id>
+			<repositories>
+				<repository>
+					<id>github</id>
+					<url>https://maven.pkg.github.com</url>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
 
-			<!-- Compiler Plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
-				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+	<dependencyManagement>
+		<dependencies>
 
+			<!-- Spring Boot BOM for dependency management -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
+				<optional>true</optional>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson.datatype</groupId>
+				<artifactId>jackson-datatype-jsr310</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>${json.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections</artifactId>
+				<version>${reflections.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 </project>
