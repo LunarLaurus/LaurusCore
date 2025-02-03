@@ -47,18 +47,8 @@
 					<url>https://repo1.maven.org/maven2</url>
 				</repository>
 				<repository>
-					<id>lauruscore</id>
-					<url>https://maven.pkg.github.com/LunarLaurus/LaurusCore</url>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</repository>
-				<repository>
-					<id>lgtmlib</id>
+					<id>github</id>
 					<url>https://maven.pkg.github.com/LunarLaurus/laurus-lgtm-lib</url>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
 				</repository>
 			</repositories>
 		</profile>
