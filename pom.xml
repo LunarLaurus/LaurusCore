@@ -37,27 +37,33 @@
 			<url>https://maven.pkg.github.com/lunarlaurus/lauruscore</url>
 		</repository>
 	</distributionManagement>
-	
+
 	<repositories>
 		<repository>
 			<id>github</id>
 			<url>https://maven.pkg.github.com</url>
 		</repository>
 	</repositories>
-    <profiles>
-        <profile>
-            <id>github</id>
-            <repositories>
-                <repository>
-                    <id>github</id>
-                    <url>https://maven.pkg.github.com</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-        </profile>
-    </profiles>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com</url>			
+		</pluginRepository>
+	</pluginRepositories>
+	<profiles>
+		<profile>
+			<id>github</id>
+			<repositories>
+				<repository>
+					<id>github</id>
+					<url>https://maven.pkg.github.com</url>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
 
 	<dependencyManagement>
 		<dependencies>
