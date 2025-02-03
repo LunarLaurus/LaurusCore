@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  JAVA_VERSION: '17'
+
 jobs:
   bump-version:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -15,15 +18,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup JDK 17
+      - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
           distribution: 'zulu'
           settings-path: ${{ github.workspace }}
           cache: maven
           token: ${{ secrets.GITHUB_TOKEN }}  
-          
+
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
@@ -35,6 +38,7 @@ jobs:
       - name: Get and Bump Java Version
         id: get_version
         run: |
+          set -e
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$NF = $NF + 1 ; print}')
           echo "Bumping version from $VERSION to $NEW_VERSION"
@@ -48,8 +52,10 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
+          git fetch --prune
+          git pull --rebase
           git add pom.xml **/pom.xml
-          git commit -m "Bump version to ${{ steps.get_version.outputs.java_version }}"
+          git commit -m "Bump version to ${{ steps.get_version.outputs.java_version }} for next release." || echo "No changes to commit"
           git push origin ${{ github.ref }}
 
   build:
@@ -61,10 +67,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup JDK 17
+      - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
           distribution: 'zulu'
           settings-path: ${{ github.workspace }}
           cache: maven
@@ -79,9 +85,15 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: mvn clean package -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload built artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-build
+          path: target/*.jar
 
       - name: Create Git Tag
         id: create_tag
@@ -104,10 +116,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
     
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: ${{ env.JAVA_VERSION }}
           distribution: 'zulu'
           server-id: github
           settings-path: ${{ github.workspace }}
@@ -122,12 +134,29 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
     
-      - name: Build with Maven
-        run: mvn clean package -DskipTests
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: maven-build
+          path: target/
 
       - name: Deploy to GitHub Packages
         run: mvn deploy -DskipTests
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build.outputs.tag }}
+          name: "Release ${{ needs.build.outputs.tag }}"
+          draft: false
+          prerelease: false
+          files: |
+            target/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
