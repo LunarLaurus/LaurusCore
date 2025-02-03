@@ -23,9 +23,7 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'zulu'
-          settings-path: ${{ github.workspace }}
           cache: maven
-          token: ${{ secrets.GITHUB_TOKEN }}  
 
       - name: Cache Maven dependencies
         uses: actions/cache@v4
@@ -77,9 +75,7 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'zulu'
-          settings-path: ${{ github.workspace }}
           cache: maven
-          token: ${{ secrets.GITHUB_TOKEN }}  
           
       - name: Cache Maven dependencies
         uses: actions/cache@v4
@@ -99,6 +95,8 @@ jobs:
         with:
           name: maven-build
           path: target/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Git Tag
         id: create_tag
@@ -127,9 +125,7 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'zulu'
           server-id: github
-          settings-path: ${{ github.workspace }}
-          cache: maven
-          token: ${{ secrets.GITHUB_TOKEN }}        
+          cache: maven       
 
       - name: Cache Maven dependencies
         uses: actions/cache@v4
