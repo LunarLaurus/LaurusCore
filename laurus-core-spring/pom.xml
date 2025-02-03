@@ -79,6 +79,20 @@
             <artifactId>junit-jupiter</artifactId>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>github</id>
+            <repositories>
+                <repository>
+                    <id>github</id>
+                    <url>https://maven.pkg.github.com</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <!-- Source JAR Plugin (with classifier) -->
