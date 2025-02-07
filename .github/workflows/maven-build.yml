@@ -7,13 +7,13 @@ on:
 
 env:
   JAVA_VERSION: '17'
+  JAVA_DISTRO: 'zulu'
 
 jobs:
-  bump-version:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  get-version:
     runs-on: ubuntu-latest
     outputs:
-      java_version: ${{ steps.get_version.outputs.java_version }}
+      current_version: ${{ steps.extract_version.outputs.current_version }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -22,48 +22,21 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'zulu'
+          distribution: ${{ env.JAVA_DISTRO }}
           cache: maven
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Get and Bump Java Version
-        id: get_version
+      - name: Extract Current Version
+        id: extract_version
         run: |
           set -e
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$NF = $NF + 1 ; print}')
-          echo "Bumping version from $VERSION to $NEW_VERSION"
-          mvn versions:set -DnewVersion=$NEW_VERSION -DgenerateBackupPoms=false
-          mvn versions:update-parent -DgenerateBackupPoms=false
-          mvn versions:update-child-modules -DgenerateBackupPoms=false
-          echo "java_version=$NEW_VERSION" >> $GITHUB_ENV
-          echo "java_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Commit and Push Updated Version
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"            
-          # Ensure the latest changes from remote
-          git fetch --prune
-          git stash # Stash any unstaged changes
-          git pull --rebase # Rebase to avoid merge conflicts
-          git stash pop # Reapply the stashed changes            
-          # Add and commit version changes
-          git add pom.xml **/pom.xml
-          git commit -m "Bump version to ${{ steps.get_version.outputs.java_version }} for next release." || echo "No changes to commit"
-          # Push changes
-          git push origin ${{ github.ref }}  
+          echo "Current version is $VERSION"
+          echo "current_version=$VERSION" >> $GITHUB_ENV
+          echo "current_version=$VERSION" >> $GITHUB_OUTPUT
 
   build:
     runs-on: ubuntu-latest
-    needs: bump-version
+    needs: get-version
     outputs:
       tag: ${{ steps.create_tag.outputs.tag }}
     steps:
@@ -74,7 +47,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'zulu'
+          distribution: ${{ env.JAVA_DISTRO }}
           cache: maven
           
       - name: Cache Maven dependencies
@@ -95,7 +68,7 @@ jobs:
         with:
           name: maven-build
           path: "**/target/*.jar"
-          if-no-files-found: error  # Fail workflow
+          if-no-files-found: error  # Fail workflow if no JARs are found
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -104,7 +77,7 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          TAG="v${{ needs.bump-version.outputs.java_version }}"
+          TAG="v${{ needs.get-version.outputs.current_version }}"
           echo "tag=$TAG" >> $GITHUB_ENV
           echo "tag=$TAG" >> $GITHUB_OUTPUT
           git tag -a "$TAG" -m "Release $TAG"
@@ -124,7 +97,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
-          distribution: 'zulu'
+          distribution: ${{ env.JAVA_DISTRO }}
           server-id: github
           cache: maven       
 
@@ -162,3 +135,50 @@ jobs:
             target/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  bump-version:
+    needs: release  # ✅ Bump version after release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+          cache: maven
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Bump Java Version
+        run: |
+          set -e
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          NEW_VERSION=$(echo $VERSION | awk -F. -v OFS=. '{$NF = $NF + 1 ; print}')
+          echo "Bumping version from $VERSION to $NEW_VERSION"
+          mvn versions:set -DnewVersion=$NEW_VERSION -DgenerateBackupPoms=false
+          mvn versions:update-parent -DgenerateBackupPoms=false
+          mvn versions:update-child-modules -DgenerateBackupPoms=false
+
+      - name: Commit and Push Updated Version
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"            
+          # Ensure the latest changes from remote
+          git fetch --prune
+          git stash # Stash any unstaged changes
+          git pull --rebase # Rebase to avoid merge conflicts
+          git stash pop # Reapply the stashed changes            
+          # Add and commit version changes
+          git add pom.xml **/pom.xml
+          git commit -m "Bump version for next release." || echo "No changes to commit"
+          # Push changes
+          git push origin ${{ github.ref }}  
