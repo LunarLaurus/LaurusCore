@@ -22,11 +22,6 @@
 			<artifactId>laurus-core</artifactId>
 			<version>0.0.55</version>
 		</dependency>
-		<dependency>
-			<groupId>net.laurus</groupId>
-			<artifactId>lgtm-lib</artifactId>
-			<version>0.0.6</version>
-		</dependency>
 		<!-- Lombok for code generation -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>

@@ -5,12 +5,15 @@ import org.influxdb.InfluxDBFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.laurus.spring.properties.InfluxDBProperties;
 
 @Configuration
 @RequiredArgsConstructor
 public class InfluxDBConfig {
 
+    @NonNull
     private InfluxDBProperties influxProps;
 
     @Bean

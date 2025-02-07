@@ -1,21 +1,25 @@
-package net.laurus.spring.config;
+package net.laurus.spring.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
+import lombok.NonNull;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
-@Configuration
-@ConfigurationProperties(prefix = "system")
 @Data
 @Slf4j
+@ConfigurationProperties(prefix = "system")
 public class SystemProperties {
 
+    @Accessors(fluent = true)
     private boolean obfuscateSecrets;
+    @NonNull
     private String allowedIp;
+    
     private IloProperties ilo;
+    
     private InfluxDBProperties influxdb;
     
     @PostConstruct

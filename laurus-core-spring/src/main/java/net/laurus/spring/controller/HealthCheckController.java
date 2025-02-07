@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.java.Log;
-import net.laurus.lgtm.tracing.Trace;
 
 /**
  * Provides endpoints for system health checks.
@@ -54,7 +53,6 @@ public class HealthCheckController {
 	 *         critically high.
 	 */
 	@GetMapping("/health")
-	@Trace
 	public ResponseEntity<String> healthCheck() {
 		return checkMemoryHealth() && isHealthy() ? ResponseEntity.ok(HEALTH_OK)
 				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(UNHEALTHY);
