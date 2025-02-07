@@ -135,9 +135,11 @@ jobs:
             target/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+  
   bump-version:
-    needs: release  # ✅ Bump version after release
+    needs: # ✅ Bump version after release and deployment
+      - release  
+      - deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -159,6 +161,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Bump Java Version
+        id: bump_version
         run: |
           set -e
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
@@ -167,6 +170,8 @@ jobs:
           mvn versions:set -DnewVersion=$NEW_VERSION -DgenerateBackupPoms=false
           mvn versions:update-parent -DgenerateBackupPoms=false
           mvn versions:update-child-modules -DgenerateBackupPoms=false
+          echo "new_version=$NEW_VERSION" >> $GITHUB_ENV
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Commit and Push Updated Version
         run: |
@@ -179,6 +184,6 @@ jobs:
           git stash pop # Reapply the stashed changes            
           # Add and commit version changes
           git add pom.xml **/pom.xml
-          git commit -m "Bump version to $NEW_VERSION for next release." || echo "No changes to commit"
+          git commit -m "Bump version to ${{ env.new_version }} for next release." || echo "No changes to commit"
           # Push changes
-          git push origin ${{ github.ref }}  
+          git push origin ${{ github.ref }}
