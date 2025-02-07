@@ -1,6 +1,5 @@
 package net.laurus.spring.properties;
 
-import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import net.laurus.network.IPv4Address;
 
@@ -13,23 +12,28 @@ public class NetworkProperties {
     /**
      * Base IP address of the network.
      */
-    private String baseIp = "0.0.0.0";
+    private String baseIp;
 
     /**
      * Subnet mask of the network.
      */
-    private String subnetMask = "0.0.0.0";
+    private String subnetMask;
 
     /**
-     * Parsed IPv4 address based on the base IP.
+     * Cached parsed IPv4 address based on the base IP.
      */
     private IPv4Address baseAddress;
 
     /**
-     * Initializes the baseAddress field after object construction.
+     * Retrieves the parsed IPv4 address.
+     * If the baseAddress is not initialized, it is created using baseIp.
+     *
+     * @return The parsed {@link IPv4Address} object.
      */
-    @PostConstruct
-    public void setupBaseIp() {
-        baseAddress = new IPv4Address(getBaseIp());
+    public IPv4Address getBaseAddress() {
+        if (baseAddress == null && baseIp != null) {
+            baseAddress = new IPv4Address(baseIp);
+        }
+        return baseAddress;
     }
 }

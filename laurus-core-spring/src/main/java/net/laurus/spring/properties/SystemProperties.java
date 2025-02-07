@@ -24,26 +24,15 @@ public class SystemProperties {
 
     /**
      * Allowed IP for system access.
-     * Defaults to localhost (127.0.0.1).
      */
     @NonNull
-    private String allowedIp = "127.0.0.1";
-
-    /**
-     * iLO authentication properties.
-     */
-    private IloProperties ilo = new IloProperties();
-
-    /**
-     * InfluxDB connection properties.
-     */
-    private InfluxDBProperties influxdb = new InfluxDBProperties();
+    private String allowedIp;
 
     /**
      * Logs system properties after initialization.
      */
     @PostConstruct
     void logSetup() {
-        log.info("Configured application using: {}", this);
+        log.info("Configured System using: {}", this);
     }
 }

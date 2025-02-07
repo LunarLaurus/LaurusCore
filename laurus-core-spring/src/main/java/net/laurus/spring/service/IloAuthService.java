@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.ilo.AbstractIloAuthService;
 import net.laurus.network.IloUser;
+import net.laurus.spring.properties.IloProperties;
 import net.laurus.spring.properties.SystemProperties;
 
 /**
@@ -23,6 +24,11 @@ public class IloAuthService extends AbstractIloAuthService {
      * System-wide configuration properties.
      */
     private final SystemProperties systemProperties;
+	
+    /**
+     * iLO configuration properties.
+     */
+    private final IloProperties iloProperties;
 
     /**
      * Default iLO user for authentication.
@@ -55,21 +61,26 @@ public class IloAuthService extends AbstractIloAuthService {
 
     /**
      * Retrieves the configured iLO username.
+     * If the username is null or empty, returns a default value of "changeme".
      *
-     * @return the iLO username from configuration.
+     * @return the iLO username from configuration, or "changeme" if not set.
      */
     @Override
     public String getConfigSuppliedIloUsername() {
-        return systemProperties.getIlo().getUsername();
+        String username = iloProperties.getUsername();
+        return (username == null || username.isBlank()) ? "changeme" : username;
     }
 
     /**
      * Retrieves the configured iLO password.
+     * If the password is null or empty, returns a default value of "changeme".
      *
-     * @return the iLO password from configuration.
+     * @return the iLO password from configuration, or "changeme" if not set.
      */
     @Override
     public String getConfigSuppliedIloPassword() {
-        return systemProperties.getIlo().getPassword();
+        String password = iloProperties.getPassword();
+        return (password == null || password.isBlank()) ? "changeme" : password;
     }
+
 }
