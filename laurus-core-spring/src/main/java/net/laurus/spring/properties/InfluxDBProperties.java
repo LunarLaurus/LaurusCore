@@ -1,18 +1,13 @@
 package net.laurus.spring.properties;
 
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
 public class InfluxDBProperties {
 
-    @NonNull
-    private String url;
-    @NonNull
-    private String username;
-    @NonNull
-    private String password;
-    @NonNull
-    private String database;
+    private String url = "http://localhost";
+    private String username = "changeme";
+    private String password = "changeme";
+    private String database = "changeme";
     
 }

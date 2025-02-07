@@ -2,17 +2,13 @@ package net.laurus.spring.properties;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
-import lombok.NonNull;
 import net.laurus.network.IPv4Address;
 
 @Data
 public class NetworkProperties {
 	
-    @NonNull
-	private String baseIp;
-    @NonNull
-	private String subnetMask;
-    
+	private String baseIp = "0.0.0.0";
+	private String subnetMask = "0.0.0.0";    
     private IPv4Address baseAddress;
 
 	@PostConstruct

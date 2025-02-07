@@ -67,7 +67,7 @@ public final class RabbitMqUtils {
      * @return An object of type T.
      * @throws IOException If decompression or deserialization fails.
      */
-    public static <T> T receivePayload(byte[] payload, Class<T> clazz) throws IOException {
+    public static <T> T processPayload(byte[] payload, Class<T> clazz) throws IOException {
         byte[] processedData = isCompressed(payload) ? decompress(payload) : payload;
         return deserializeFromJson(processedData, clazz);
     }
@@ -124,7 +124,7 @@ public final class RabbitMqUtils {
 	 */
 	public static <T> void processClientMessage(byte[] clientPayload, Class<T> clientType, FunctionHandler<T> cacheHandler) {
 		try {
-			T client = RabbitMqUtils.receivePayload(clientPayload, clientType);
+			T client = RabbitMqUtils.processPayload(clientPayload, clientType);
 			cacheHandler.handle(client);
 		} catch (IOException e) {
 			log.error("Error processing client message: {}", e.getMessage(), e);

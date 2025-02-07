@@ -1,18 +1,14 @@
 package net.laurus.spring.properties;
 
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
 public class IloProperties {
 
-    @NonNull
-	private String username;
-    @NonNull
-	private String password;
-	private int clientTimeoutConnect;
-	private int clientTimeoutRead;
-    @NonNull
-	private NetworkProperties network;
+	private String username = "changeme";
+	private String password = "changeme";
+	private int clientTimeoutConnect = 1000;
+	private int clientTimeoutRead = 1000;
+	private NetworkProperties network = new NetworkProperties();
 
 }

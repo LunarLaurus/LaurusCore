@@ -16,11 +16,11 @@ public class SystemProperties {
     @Accessors(fluent = true)
     private boolean obfuscateSecrets;
     @NonNull
-    private String allowedIp;
+    private String allowedIp = "127.0.0.1";
     
-    private IloProperties ilo;
+    private IloProperties ilo = new IloProperties();
     
-    private InfluxDBProperties influxdb;
+    private InfluxDBProperties influxdb = new InfluxDBProperties();
     
     @PostConstruct
     void logSetup() {
