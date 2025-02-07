@@ -7,6 +7,9 @@ import net.laurus.interfaces.NetworkData;
 
 import static java.util.List.of;
 
+/**
+ * Enum representing different operating systems.
+ */
 @AllArgsConstructor
 @Log
 public enum OperatingSystem implements NetworkData {
@@ -21,22 +24,22 @@ public enum OperatingSystem implements NetworkData {
     UNKNOWN(of());
 
     private static final long serialVersionUID = 0;
+    private final List<String> alias;
 
-    List<String> alias;
-
+    /**
+     * Finds an OS type based on a given model name.
+     *
+     * @param modelName The model name.
+     * @return The corresponding OperatingSystem or UNKNOWN if not found.
+     */
     public static OperatingSystem lookup(String modelName) {
-        for (OperatingSystem v : OperatingSystem.values()) {
-            if (modelName.toLowerCase().contains(v.name().toLowerCase())) {
-                return v;
-            } else {
-                for (String a : v.alias) {
-                    if (modelName.toLowerCase().contains(a.toLowerCase())) {
-                        return v;
-                    }
-                }
+        modelName = modelName.toLowerCase();
+        for (OperatingSystem os : values()) {
+            if (modelName.contains(os.name().toLowerCase()) || os.alias.stream().anyMatch(modelName::contains)) {
+                return os;
             }
         }
-        log.info("Tried to find Vendor but was Unknown: " + modelName);
+        log.info("OS not recognized: " + modelName);
         return UNKNOWN;
     }
 }

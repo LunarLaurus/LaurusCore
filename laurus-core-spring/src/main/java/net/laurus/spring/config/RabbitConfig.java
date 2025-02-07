@@ -22,6 +22,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.laurus.spring.properties.RabbitProperties;
 
+/**
+ * Configuration for RabbitMQ messaging.
+ * Handles connection, serialization, and retry policies.
+ */
 @Configuration
 @EnableRabbit
 @Slf4j
@@ -33,6 +37,9 @@ public class RabbitConfig {
 
     private final RabbitProperties rabbitProperties;
 
+    /**
+     * Logs RabbitMQ configuration settings on startup.
+     */
     @PostConstruct
     public void init() {
         log.info("RabbitMQ Config Initialized with Host: {}, Port: {}", 
@@ -41,7 +48,9 @@ public class RabbitConfig {
     }
 
     /**
-     * Registers CachingConnectionFactory as a Spring Bean.
+     * Creates and configures the RabbitMQ connection factory.
+     *
+     * @return the configured {@link CachingConnectionFactory} instance.
      */
     @Bean
     public CachingConnectionFactory connectionFactory() {
@@ -53,7 +62,10 @@ public class RabbitConfig {
     }
 
     /**
-     * Registers RabbitAdmin as a Spring Bean using the same ConnectionFactory.
+     * Registers an AMQP Admin bean for managing RabbitMQ components.
+     *
+     * @param connectionFactory The RabbitMQ connection factory.
+     * @return an instance of {@link AmqpAdmin}.
      */
     @Bean
     public AmqpAdmin amqpAdmin(CachingConnectionFactory connectionFactory) {
@@ -61,7 +73,10 @@ public class RabbitConfig {
     }
 
     /**
-     * Registers RabbitTemplate as a Spring Bean using the same ConnectionFactory.
+     * Creates a RabbitTemplate bean for sending messages.
+     *
+     * @param connectionFactory The RabbitMQ connection factory.
+     * @return a configured {@link RabbitTemplate}.
      */
     @Bean
     public RabbitTemplate rabbitTemplate(CachingConnectionFactory connectionFactory) {
@@ -71,7 +86,9 @@ public class RabbitConfig {
     }
 
     /**
-     * Allowed List Deserializing Message Converter.
+     * Provides an AllowedListDeserializingMessageConverter for secure deserialization.
+     *
+     * @return an instance of {@link AllowedListDeserializingMessageConverter}.
      */
     @Bean
     public AllowedListDeserializingMessageConverter allowedListDeserializingMessageConverter() {
@@ -81,7 +98,9 @@ public class RabbitConfig {
     }
 
     /**
-     * Retry Template for RabbitMQ Operations.
+     * Defines a retry template for handling failed message operations.
+     *
+     * @return a configured {@link RetryTemplate}.
      */
     @Bean
     public RetryTemplate retryTemplate() {

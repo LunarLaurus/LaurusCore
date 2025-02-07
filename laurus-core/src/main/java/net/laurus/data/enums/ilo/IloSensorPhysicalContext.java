@@ -3,10 +3,13 @@ package net.laurus.data.enums.ilo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Enum representing different physical sensor contexts in HP iLO.
+ */
 @Getter
 @RequiredArgsConstructor
 public enum IloSensorPhysicalContext {
-	
+
     ROOM("Room"),
     INTAKE("Intake"),
     EXHAUST("Exhaust"),
@@ -31,6 +34,12 @@ public enum IloSensorPhysicalContext {
 
     private final String expectedJsonValue;
 
+    /**
+     * Retrieves the corresponding enum value for a given string.
+     *
+     * @param input The string representation of the sensor physical context.
+     * @return The matching {@link IloSensorPhysicalContext} value, or {@code UNKNOWN} if not found.
+     */
     public static IloSensorPhysicalContext fromString(String input) {
         if (input == null || input.isEmpty()) {
             return UNKNOWN;
@@ -43,4 +52,3 @@ public enum IloSensorPhysicalContext {
         return UNKNOWN;
     }
 }
-

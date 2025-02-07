@@ -3,37 +3,73 @@ package net.laurus.data.enums.ilo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Class containing enums for HP ProLiant server models, generations, prefixes, and numbers.
+ */
 public class ProLiantModels {
 
+    /**
+     * Enum representing different generations of HP ProLiant servers.
+     */
     @Getter
     @AllArgsConstructor
     public enum Generation {
-    	UNKNOWN("Unknown"),
+        /** Unknown generation */
+        UNKNOWN("Unknown"),
+
+        /** Generation 8 */
         GEN8("Gen 8"),
+
+        /** Generation 9 */
         GEN9("Gen 9"),
+
+        /** Generation 10 */
         GEN10("Gen 10"),
+
+        /** Generation 10+ */
         GEN10_PLUS("Gen 10+"),
+
+        /** Generation 11 */
         GEN11("Gen 11");
 
         private final String displayName;
     }
 
+    /**
+     * Enum representing the model prefix of HP ProLiant servers.
+     * <p>
+     * Each prefix represents a different type of server architecture.
+     */
     @Getter
     @AllArgsConstructor
     public enum ModelPrefix {
-    	UNKNOWN("?"),
-        BL("BL"),  // Blade
-        DL("DL"),  // Density Line
-        ML("ML"),  // Microserver
-        SL("SL");  // Scalable Line
+        /** Unknown model prefix */
+        UNKNOWN("?"),
+
+        /** Blade server */
+        BL("BL"),
+
+        /** Density Line server */
+        DL("DL"),
+
+        /** Microserver */
+        ML("ML"),
+
+        /** Scalable Line server */
+        SL("SL");
 
         private final String prefix;
     }
 
+    /**
+     * Enum representing different model numbers of HP ProLiant servers.
+     */
     @Getter
     @AllArgsConstructor
     public enum ModelNumber {
-    	UNKNOWN(0),
+        /** Unknown model number */
+        UNKNOWN(0),
+
         MODEL_20(20),
         MODEL_30(30),
         MODEL_60(60),
@@ -59,15 +95,20 @@ public class ProLiantModels {
         MODEL_660(660),
         MODEL_760(760),
         MODEL_2000(2000);
-    	
-    	int modelNumber;
+
+        private final int modelNumber;
     }
 
+    /**
+     * Enum representing specific HP ProLiant server models, classified by generation, prefix, and model number.
+     */
     @Getter
     @AllArgsConstructor
     public enum ProLiantModel {
 
-    	UNKNOWN(Generation.UNKNOWN, ModelPrefix.UNKNOWN, ModelNumber.UNKNOWN, "?"),
+        /** Unknown model */
+        UNKNOWN(Generation.UNKNOWN, ModelPrefix.UNKNOWN, ModelNumber.UNKNOWN, "?"),
+
         // Generation 8
         Gen8_DL160(Generation.GEN8, ModelPrefix.DL, ModelNumber.MODEL_160, ""),
         Gen8_DL320e(Generation.GEN8, ModelPrefix.DL, ModelNumber.MODEL_320, "e"),
@@ -78,15 +119,13 @@ public class ProLiantModels {
         Gen8_DL560p(Generation.GEN8, ModelPrefix.DL, ModelNumber.MODEL_560, "p"),
         Gen8_DL580p(Generation.GEN8, ModelPrefix.DL, ModelNumber.MODEL_580, "p"),
         Gen8_DL760p(Generation.GEN8, ModelPrefix.DL, ModelNumber.MODEL_760, "p"),
-
         Gen8_BL460c(Generation.GEN8, ModelPrefix.BL, ModelNumber.MODEL_460, "c"),
         Gen8_BL465c(Generation.GEN8, ModelPrefix.BL, ModelNumber.MODEL_465, "c"),
         Gen8_BL660c(Generation.GEN8, ModelPrefix.BL, ModelNumber.MODEL_660, "c"),
-        
         Gen8_ML110(Generation.GEN8, ModelPrefix.ML, ModelNumber.MODEL_110, ""),
         Gen8_ML310p(Generation.GEN8, ModelPrefix.ML, ModelNumber.MODEL_310, ""),
         Gen8_ML350p(Generation.GEN8, ModelPrefix.ML, ModelNumber.MODEL_350, ""),
-        
+
         // Generation 9
         Gen9_DL20(Generation.GEN9, ModelPrefix.DL, ModelNumber.MODEL_20, ""),
         Gen9_DL60(Generation.GEN9, ModelPrefix.DL, ModelNumber.MODEL_60, ""),
@@ -103,22 +142,17 @@ public class ProLiantModels {
         Gen9_ML110(Generation.GEN9, ModelPrefix.ML, ModelNumber.MODEL_110, ""),
         Gen9_ML150(Generation.GEN9, ModelPrefix.ML, ModelNumber.MODEL_150, ""),
         Gen9_ML350(Generation.GEN9, ModelPrefix.ML, ModelNumber.MODEL_350, ""),
-        
+
         // Generation 10
         Gen10_DL20(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_20, "e"),
-        Gen10_DL325(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_325, "e"),      
+        Gen10_DL325(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_325, "e"),
         Gen10_DL360(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_360, ""),
         Gen10_DL380(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_380, ""),
         Gen10_DL385(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_385, ""),
         Gen10_DL560(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_560, ""),
         Gen10_DL580(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_580, ""),
         Gen10_DL760(Generation.GEN10, ModelPrefix.DL, ModelNumber.MODEL_760, ""),
-        Gen10_BL460(Generation.GEN10, ModelPrefix.BL, ModelNumber.MODEL_460, ""),
-        Gen10_ML30(Generation.GEN10, ModelPrefix.ML, ModelNumber.MODEL_30, ""),
-        Gen10_ML110(Generation.GEN10, ModelPrefix.ML, ModelNumber.MODEL_110, ""),
-        Gen10_ML350(Generation.GEN10, ModelPrefix.ML, ModelNumber.MODEL_350, ""),
-        
-        
+
         // Generation 10+
         Gen10Plus_DL360(Generation.GEN10_PLUS, ModelPrefix.DL, ModelNumber.MODEL_360, ""),
         Gen10Plus_DL380(Generation.GEN10_PLUS, ModelPrefix.DL, ModelNumber.MODEL_380, ""),
@@ -141,5 +175,4 @@ public class ProLiantModels {
             return String.format("%s%s%s (%s)", prefix.getPrefix(), number.getModelNumber(), suffix, generation.getDisplayName());
         }
     }
-    
 }

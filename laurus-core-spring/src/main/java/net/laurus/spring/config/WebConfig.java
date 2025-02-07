@@ -17,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.laurus.spring.properties.ServerProperties;
 import net.laurus.spring.properties.SystemProperties;
 
+/**
+ * Web configuration class handling CORS, logging, and static resource mapping.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
@@ -32,6 +35,11 @@ public class WebConfig implements WebMvcConfigurer {
     @NonNull
     private final SystemProperties systemConfig;
 
+    /**
+     * Configures request logging to include headers, payload, and query parameters.
+     *
+     * @return a {@link CommonsRequestLoggingFilter} instance.
+     */
     @Bean
     public CommonsRequestLoggingFilter logFilter() {
         CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
@@ -43,6 +51,11 @@ public class WebConfig implements WebMvcConfigurer {
         return filter;
     }
 
+    /**
+     * Configures CORS settings to allow specified origins and methods.
+     *
+     * @param registry The CORS registry.
+     */
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         log.info("Using Environment IP for CORS: " + systemConfig.getAllowedIp());
@@ -53,11 +66,21 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true);
     }
 
+    /**
+     * Configures static resource handling.
+     *
+     * @param registry The resource handler registry.
+     */
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
     }
 
+    /**
+     * Determines allowed CORS origins dynamically.
+     *
+     * @return a set of allowed CORS origin URLs.
+     */
     private Set<String> getCorsAllowedOrigins() {
         String allowedIp = systemConfig.getAllowedIp();
         int serverPort = serverProperties.getPort();

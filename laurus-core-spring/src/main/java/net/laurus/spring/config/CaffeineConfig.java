@@ -10,10 +10,18 @@ import org.springframework.context.annotation.Configuration;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+/**
+ * Configuration class for Caffeine-based caching.
+ */
 @Configuration
 @EnableCaching
 public class CaffeineConfig {
 
+    /**
+     * Configures Caffeine cache with an expiration time of 6 hours and a max size of 1000 entries.
+     *
+     * @return a configured {@link Caffeine} instance.
+     */
     @Bean
     public Caffeine<Object, Object> caffeineConfig() {
         return Caffeine.newBuilder()
@@ -21,6 +29,12 @@ public class CaffeineConfig {
                 .maximumSize(1000);
     }
 
+    /**
+     * Creates a CaffeineCacheManager bean using the configured Caffeine instance.
+     *
+     * @param caffeine The Caffeine configuration.
+     * @return a {@link CacheManager} instance.
+     */
     @Bean
     public CacheManager cacheManager(Caffeine<Object, Object> caffeine) {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();

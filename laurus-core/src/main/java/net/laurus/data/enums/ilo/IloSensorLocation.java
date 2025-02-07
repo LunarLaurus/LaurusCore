@@ -3,9 +3,13 @@ package net.laurus.data.enums.ilo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Enum representing different sensor locations within an HP iLO system.
+ */
 @Getter
 @RequiredArgsConstructor
 public enum IloSensorLocation {
+
     SYSTEM("System"),
     SYSTEM_BOARD("System Board"),
     IO_BOARD("I/O Board"),
@@ -26,6 +30,12 @@ public enum IloSensorLocation {
 
     private final String expectedJsonValue;
 
+    /**
+     * Retrieves the corresponding enum value for a given string.
+     *
+     * @param input The string representation of the sensor location.
+     * @return The matching {@link IloSensorLocation} value, or {@code UNKNOWN} if not found.
+     */
     public static IloSensorLocation fromString(String input) {
         if (input == null || input.isEmpty()) {
             return UNKNOWN;
