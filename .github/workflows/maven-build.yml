@@ -94,7 +94,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: maven-build
-          path: target/*.jar
+          path: "**/target/*.jar"
+          if-no-files-found: error  # Fail workflow
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
