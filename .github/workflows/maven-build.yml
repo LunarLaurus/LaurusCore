@@ -179,6 +179,6 @@ jobs:
           git stash pop # Reapply the stashed changes            
           # Add and commit version changes
           git add pom.xml **/pom.xml
-          git commit -m "Bump version for next release." || echo "No changes to commit"
+          git commit -m "Bump version to $NEW_VERSION for next release." || echo "No changes to commit"
           # Push changes
           git push origin ${{ github.ref }}  
