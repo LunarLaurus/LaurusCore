@@ -102,7 +102,7 @@ public class EnumTest {
         @Test
         void testFromString() {
             assertEquals(DriveType.REMOVABLE, DriveType.fromString("removable"));
-            assertNull(DriveType.fromString("invalid"));
+            assertEquals(DriveType.UNKNOWN, DriveType.fromString("invalid"));
         }
     }
 

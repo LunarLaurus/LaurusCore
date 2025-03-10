@@ -1,8 +1,16 @@
 package net.laurus.data.enums.system;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Enum representing different types of drives.
  */
+@RequiredArgsConstructor
+@Getter
 public enum DriveType {
 
     /** Unknown drive type */
@@ -26,30 +34,10 @@ public enum DriveType {
     /** RAM disk */
     RAM(6);
 
+    /**
+     * The integer value associated with the drive type.
+     */
     private final int value;
-
-    DriveType(int value) {
-        this.value = value;
-    }
-
-    /**
-     * Gets the integer value associated with the drive type.
-     *
-     * @return the numeric value of the drive type.
-     */
-    public int getValue() {
-        return value;
-    }
-
-    /**
-     * Gets a string representation of the enum.
-     *
-     * @param driveType The drive type.
-     * @return The name of the drive type.
-     */
-    public static String toString(DriveType driveType) {
-        return driveType.name();
-    }
 
     /**
      * Converts a string into a corresponding DriveType enum (case-insensitive).
@@ -58,10 +46,23 @@ public enum DriveType {
      * @return The corresponding DriveType or UNKNOWN if not found.
      */
     public static DriveType fromString(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return UNKNOWN;
+        }
         try {
-            return DriveType.valueOf(name.toUpperCase());
+            return valueMap.getOrDefault(name.trim().toUpperCase(), UNKNOWN);
         } catch (IllegalArgumentException e) {
             return UNKNOWN;
         }
+    }
+
+    private static final Map<String, DriveType> valueMap = initializeValueMap();
+
+    private static Map<String, DriveType> initializeValueMap(){
+        Map<String, DriveType> map = new HashMap<>();
+        for(DriveType driveType : DriveType.values()){
+            map.put(driveType.name().trim().toUpperCase(), driveType);
+        }
+        return map;
     }
 }

@@ -1,6 +1,8 @@
 package net.laurus.data.enums;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import net.laurus.interfaces.NetworkData;
@@ -22,6 +24,14 @@ public enum Vendor implements NetworkData {
     private static final long serialVersionUID = 0;
     private final List<String> alias;
 
+    private static final Map<String, Vendor> aliasMap = initializeAliasMap();
+
+    private static Map<String, Vendor> initializeAliasMap() {
+        return java.util.Arrays.stream(values())
+                .flatMap(vendor -> vendor.alias.stream().map(alias -> Map.entry(alias.toLowerCase(), vendor)))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v1)); // Keep first encountered
+    }
+
     /**
      * Finds a vendor based on a given model name.
      *
@@ -29,12 +39,30 @@ public enum Vendor implements NetworkData {
      * @return The corresponding Vendor or UNKNOWN if not found.
      */
     public static Vendor lookup(String modelName) {
-        modelName = modelName.toLowerCase();
+        if (modelName == null || modelName.trim().isEmpty()) {
+            log.warning("Model name is null or empty.");
+            return UNKNOWN;
+        }
+
+        String cleanedModelName = modelName.trim().toLowerCase();
+
         for (Vendor v : values()) {
-            if (modelName.contains(v.name().toLowerCase()) || v.alias.stream().anyMatch(modelName::contains)) {
+            if (cleanedModelName.contains(v.name().toLowerCase())) {
                 return v;
             }
         }
+
+        Vendor aliasMatch = aliasMap.get(cleanedModelName);
+        if (aliasMatch != null) {
+            return aliasMatch;
+        }
+
+        for(String alias : aliasMap.keySet()){
+            if(cleanedModelName.contains(alias)){
+                return aliasMap.get(alias);
+            }
+        }
+
         log.info("Vendor not recognized: " + modelName);
         return UNKNOWN;
     }
