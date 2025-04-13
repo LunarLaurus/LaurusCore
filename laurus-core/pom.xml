@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>net.laurus</groupId>
 		<artifactId>laurus-parent</artifactId>
-		<version>0.0.65</version>
+		<version>0.0.66</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>laurus-core</artifactId>
