@@ -7,7 +7,7 @@
 	<groupId>net.laurus</groupId>
 
 	<artifactId>laurus-parent</artifactId>
-	<version>0.0.66</version>
+	<version>0.0.67</version>
 	<packaging>pom</packaging>
 
 	<modules>
