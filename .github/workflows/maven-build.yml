@@ -16,7 +16,7 @@ jobs:
       current_version: ${{ steps.extract_version.outputs.current_version }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -41,7 +41,7 @@ jobs:
       tag: ${{ steps.create_tag.outputs.tag }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -91,7 +91,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
     
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -143,7 +143,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK
         uses: actions/setup-java@v4
