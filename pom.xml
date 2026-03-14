@@ -25,7 +25,7 @@
 
 		<spring.version>3.5.11</spring.version>
 		<lombok.version>1.18.44</lombok.version>
-		<jackson.version>2.20.1</jackson.version>
+		<jackson.version>2.21.1</jackson.version>
 		<json.version>20250517</json.version>
 		<reflections.version>0.10.2</reflections.version>
 		<junit.version>5.14.3</junit.version>
